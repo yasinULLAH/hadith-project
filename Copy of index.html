@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hadith Gems Offline - Final</title>
+    <!-- Author: Yasin Ullah -->
+    <!-- Nationality: Pakistani -->
+    <style>
+        :root {
+            --font-arabic: 'Noto Naskh Arabic', 'Amiri', 'Times New Roman', serif;
+            --font-english: 'Georgia', 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+            --font-ui: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --bg-color: #2c2c2c; --text-color: #e0e0e0; --primary-color: #a47c48; --secondary-color: #5a5a5a; --accent-color: #c8a064; --border-color: #444; --card-bg: #383838; --input-bg: #404040; --input-text: #e0e0e0; --button-bg: var(--primary-color); --button-text: #fff; --link-color: var(--accent-color); --modal-bg: #303030; --modal-border: var(--primary-color); --bookmark-active-color: #e67e22;
+        }
+        body.theme-light { --bg-color: #f4f1ea; --text-color: #333; --primary-color: #8B4513; --secondary-color: #D2B48C; --accent-color: #A0522D; --border-color: #c0c0c0; --card-bg: #fff; --input-bg: #fff; --input-text: #333; --button-bg: var(--primary-color); --button-text: #fff; --link-color: var(--accent-color); --modal-bg: #fdfcf7; --modal-border: var(--primary-color); --bookmark-active-color: #d35400; }
+        body.theme-futuristic { --bg-color: #1a1a2e; --text-color: #e0e6f0; --primary-color: #00aaff; --secondary-color: #2a2a4e; --accent-color: #00f2ea; --border-color: #3a3a5e; --card-bg: #20203a; --input-bg: #252545; --input-text: #e0e6f0; --button-bg: var(--primary-color); --button-text: #1a1a2e; --link-color: var(--accent-color); --modal-bg: #1f1f35; --modal-border: var(--primary-color); --bookmark-active-color: #00f2ea; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: var(--font-ui); background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; display: flex; transition: background-color 0.3s, color 0.3s; }
+        .sidebar { width: 260px; background-color: var(--secondary-color); padding: 20px; height: 100vh; position: fixed; overflow-y: auto; border-right: 1px solid var(--border-color); }
+        .sidebar h1 { font-family: var(--font-english); font-size: 1.8em; color: var(--accent-color); text-align: center; margin-bottom: 20px; }
+        .sidebar nav ul { list-style: none; }
+        .sidebar nav ul li a { display: block; padding: 10px 15px; color: var(--text-color); text-decoration: none; border-radius: 4px; margin-bottom: 5px; transition: background-color 0.2s, color 0.2s; font-size: 0.95em; }
+        .sidebar nav ul li a:hover, .sidebar nav ul li a.active { background-color: var(--primary-color); color: var(--button-text); }
+        .main-content { margin-left: 260px; padding: 20px; width: calc(100% - 260px); overflow-y: auto; height: 100vh; }
+        .page { display: none; } .page.active { display: block; }
+        h2 { color: var(--accent-color); margin-bottom: 20px; border-bottom: 1px solid var(--primary-color); padding-bottom: 10px; }
+        .hadith-card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-left: 5px solid var(--primary-color); padding: 15px; margin-bottom: 15px; border-radius: 5px; position: relative; }
+        .hadith-card .arabic-text { font-family: var(--font-arabic); font-size: 1.6em; direction: rtl; text-align: right; margin-bottom: 10px; line-height: 1.9; }
+        .hadith-card .translation-display-area .translation-text { font-family: var(--font-english); font-size: 1.1em; margin-bottom: 10px; }
+        .hadith-card .source, .hadith-card .tags-display, .hadith-card .notes, .hadith-card .chapter-info { font-size: 0.9em; color: var(--text-color); opacity: 0.8; margin-bottom: 5px; }
+        .hadith-card .notes { font-style: italic; }
+        .hadith-card .actions button { margin-right: 5px; padding: 5px 8px; font-size: 0.8em; }
+        .bookmark-btn { background: none; border: none; color: var(--text-color); font-size: 1.5em; cursor: pointer; position: absolute; top: 10px; right: 10px; padding: 5px; z-index: 10; }
+        .bookmark-btn.bookmarked { color: var(--bookmark-active-color); }
+        .translation-selector-container { margin-bottom: 8px; font-size: 0.9em; }
+        .translation-selector-container label { margin-right: 5px; }
+        .translation-selector-container select { width: auto; display: inline-block; padding: 3px 5px; font-size: 0.9em; margin-bottom: 0; }
+
+        button, input[type="submit"], .btn { background-color: var(--button-bg); color: var(--button-text); border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 1em; transition: background-color 0.2s; }
+        button:hover, input[type="submit"]:hover, .btn:hover { opacity: 0.9; }
+        button.secondary { background-color: var(--secondary-color); color: var(--text-color); }
+        button.danger { background-color: #c0392b; color: white; }
+        input[type="text"], input[type="search"], input[type="number"], textarea, select { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid var(--border-color); border-radius: 4px; background-color: var(--input-bg); color: var(--input-text); font-family: var(--font-ui); }
+        textarea { min-height: 100px; font-family: var(--font-english); }
+        textarea.arabic-input { font-family: var(--font-arabic); direction: rtl; }
+        .form-group { margin-bottom: 15px; } .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .filter-controls { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: flex-end; }
+        .filter-controls .form-group { flex: 1; min-width: 150px; margin-bottom: 0; }
+        .filter-controls .form-group label input[type="checkbox"] { width: auto; margin-right: 5px; vertical-align: middle; }
+        .pagination-controls { text-align: center; margin-top: 20px; }
+        .pagination-controls button { margin: 0 5px; } .pagination-controls span { margin: 0 10px; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
+        .modal-content { background-color: var(--modal-bg); margin: 5% auto; padding: 25px; border: 1px solid var(--modal-border); border-radius: 8px; width: 90%; max-width: 700px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; }
+        .modal-header h3 { margin: 0; color: var(--accent-color); }
+        .close-button { color: var(--text-color); font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close-button:hover, .close-button:focus { opacity: 0.7; }
+        .tags-input-container { display: flex; flex-wrap: wrap; gap: 5px; padding: 5px; border: 1px solid var(--border-color); border-radius: 4px; background-color: var(--input-bg); }
+        .tag-item { background-color: var(--primary-color); color: var(--button-text); padding: 3px 8px; border-radius: 3px; font-size: 0.9em; display: flex; align-items: center; }
+        .tag-item .remove-tag { margin-left: 5px; cursor: pointer; font-weight: bold; }
+        #newHadithTags, #editHadithTags { flex-grow: 1; border: none; outline: none; padding: 5px; background-color: transparent; color: var(--input-text); }
+        #availableTagsContainer label, #availableCollectionsContainer label { display: inline-block; margin-right: 10px; background-color: var(--secondary-color); padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-bottom: 5px; }
+        #availableTagsContainer input[type="checkbox"], #availableCollectionsContainer input[type="checkbox"] { margin-right: 5px; display: none; }
+        #availableTagsContainer input[type="checkbox"]:checked + span, #availableCollectionsContainer input[type="checkbox"]:checked + span { background-color: var(--primary-color); color: var(--button-text); }
+        #availableTagsContainer label span, #availableCollectionsContainer label span { padding: 5px 8px; border-radius: 3px; display: inline-block; border: 1px solid var(--border-color); }
+        @media (max-width: 768px) { .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border-color); } .main-content { margin-left: 0; width: 100%; } .modal-content { width: 95%; margin: 5% auto; } .filter-controls { flex-direction: column; } .filter-controls .form-group { margin-bottom: 10px;} }
+        .hidden { display: none !important; } .text-center { text-align: center; } .mt-1 { margin-top: 1rem; } .mb-1 { margin-bottom: 1rem; }
+        .spinner { border: 4px solid var(--secondary-color); border-top: 4px solid var(--primary-color); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 10px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; }
+        .toast { background-color: var(--primary-color); color: var(--button-text); padding: 15px; border-radius: 5px; margin-bottom: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); opacity: 0; transition: opacity 0.5s ease-in-out; }
+        .toast.show { opacity: 1; }
+        .disabled-feature { opacity: 0.5; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h1>Hadith Gems</h1>
+        <nav>
+            <ul>
+                <li><a href="#" class="nav-link active" data-page="dashboard">Dashboard</a></li>
+                <li><a href="#" class="nav-link" data-page="allHadith">All Hadith</a></li>
+                <li><a href="#" class="nav-link" data-page="tags">Manage Tags</a></li>
+                <li><a href="#" class="nav-link" data-page="collections">Manage Collections</a></li>
+                <li><a href="#" class="nav-link" data-page="addHadith">Add New Hadith</a></li>
+                <li><a href="#" class="nav-link" data-page="importHadith">Import Book</a></li>
+                <li><a href="#" class="nav-link" data-page="manageBookData">Manage Book Data</a></li>
+                <li><a href="#" class="nav-link" data-page="backupRestore">Backup & Restore</a></li>
+                <li><a href="#" class="nav-link" data-page="settings">Settings</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div id="dashboard" class="page active">
+            <h2>Dashboard</h2>
+            <div id="hadithOfTheDayCard" class="hadith-card">
+                <h3>Hadith of the Day</h3>
+                <div id="hadithOfTheDayContent">Loading...</div>
+                <button id="refreshHadithOfTheDay" class="mt-1">Refresh</button>
+                <select id="hotdTagFilter" class="mt-1" style="width:auto; display:inline-block; padding: 5px;"><option value="">All Hadith</option></select>
+            </div>
+        </div>
+
+        <div id="allHadith" class="page">
+            <h2>All Hadith</h2>
+            <div class="form-group"><input type="search" id="searchInput" placeholder="Search Hadith (text, translation, notes, source, chapter)..."></div>
+            <div class="filter-controls">
+                <div class="form-group"><label for="bookFilter">Book:</label><select id="bookFilter"><option value="">All Books</option></select></div>
+                <div class="form-group"><label for="chapterFilter">Chapter:</label><select id="chapterFilter"><option value="">All Chapters</option></select></div>
+                <div class="form-group"><label for="tagFilter">Tag:</label><select id="tagFilter"><option value="">All Tags</option></select></div>
+                <div class="form-group"><label><input type="checkbox" id="bookmarkFilter"> Bookmarked</label></div>
+            </div>
+            <div id="hadithList"></div>
+            <p id="noHadithMessage" class="hidden">No Hadith found.</p>
+            <div id="paginationControls" class="pagination-controls"></div>
+        </div>
+
+        <div id="tags" class="page">
+            <h2>Manage Tags</h2>
+            <div class="form-group"><label for="newTagName">Create New Tag:</label><input type="text" id="newTagName" placeholder="Enter tag name"><button id="addTagButton">Add Tag</button></div>
+            <h3>Existing Tags:</h3><ul id="tagList"></ul><p id="noTagsMessage" class="hidden">No tags created yet.</p>
+        </div>
+        <div id="collections" class="page">
+            <h2>Manage Collections</h2><button id="showAddCollectionModalButton">Create New Collection</button>
+            <h3>Existing Collections:</h3><div id="collectionList"></div><p id="noCollectionsMessage" class="hidden">No collections created yet.</p>
+        </div>
+        
+        <div id="importHadith" class="page">
+            <h2>Import Full Book (fawazahmed0 API)</h2>
+            <p>Select a book, Arabic edition, and a primary translation to import. Chapter names will also be fetched if available.</p>
+            <div class="form-group"><label for="importBookSelect">Book Collection:</label><select id="importBookSelect"></select></div>
+            <div class="form-group"><label for="importArabicEditionSelect">Arabic Edition:</label><select id="importArabicEditionSelect"></select></div>
+            <div class="form-group"><label for="importTranslationLanguageSelect">Primary Translation Language:</label><select id="importTranslationLanguageSelect">
+                <option value="eng">English</option><option value="urd">Urdu</option><option value="ben">Bengali</option><option value="ind">Indonesian</option><option value="tur">Turkish</option><option value="rus">Russian</option><option value="fra">French</option><option value="tam">Tamil</option>
+            </select></div>
+            <div class="form-group"><label for="importTranslationEditionSelect">Primary Translation Edition:</label><select id="importTranslationEditionSelect"></select></div>
+            <button id="importHadithButton">Import Entire Book</button>
+            <div id="importStatus" class="mt-1"></div><div id="importSpinner" class="spinner hidden"></div>
+        </div>
+
+        <div id="manageBookData" class="page">
+            <h2>Manage Book Data</h2>
+            <div class="form-group">
+                <label for="manageBookDataBookSelect">Select Book to Manage:</label>
+                <select id="manageBookDataBookSelect"><option value="">-- Select a Book --</option></select>
+            </div>
+            <div id="manageBookDataControls" class="hidden">
+                <h3>Add Additional Translations</h3>
+                <div class="form-group">
+                    <label for="manageBookDataLangSelect">Translation Language:</label>
+                    <select id="manageBookDataLangSelect"></select>
+                </div>
+                <div class="form-group">
+                    <label for="manageBookDataEditionSelect">Translation Edition to Add:</label>
+                    <select id="manageBookDataEditionSelect"></select>
+                </div>
+                <button id="addTranslationButton">Add Selected Translation</button>
+                <div id="addTranslationStatus" class="mt-1"></div>
+
+                <h3 class="mt-1">Refresh Chapter Names</h3>
+                <button id="refreshChapterNamesButton">Refresh Chapter Names for this Book</button>
+                <div id="refreshChapterNamesStatus" class="mt-1"></div>
+            </div>
+        </div>
+
+        <div id="backupRestore" class="page">
+            <h2>Backup & Restore</h2>
+            <div class="form-group"><h3>Backup</h3><p>Download all your Hadith data as a JSON file.</p><button id="backupButton">Backup Data</button></div>
+            <div class="form-group"><h3>Restore</h3><p>Restore data from a previously backed up JSON file. This will overwrite existing data.</p><input type="file" id="restoreFile" accept=".json"><button id="restoreButton" class="mt-1">Restore Data</button></div>
+        </div>
+        <div id="settings" class="page">
+            <h2>Settings</h2>
+            <div class="form-group"><label for="themeSelector">Select Theme:</label><select id="themeSelector"><option value="manuscript-dark">Manuscript Dark (Default)</option><option value="light">Classic Light</option><option value="futuristic">Futuristic</option></select></div>
+        </div>
+    </div>
+
+    <div id="hadithModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3 id="hadithModalTitle">Add New Hadith</h3><span class="close-button" id="closeHadithModal">×</span></div>
+            <form id="hadithForm">
+                <input type="hidden" id="hadithId">
+                <div class="form-group"><label for="hadithArabicText">Arabic Text:</label><textarea id="hadithArabicText" class="arabic-input" rows="4"></textarea></div>
+                <div class="form-group"><label for="hadithTranslationText">Primary Translation:</label><textarea id="hadithTranslationText" rows="4" required></textarea></div>
+                <div class="form-group"><label for="hadithSourceBook">Source Book:</label><input type="text" id="hadithSourceBook" required></div>
+                <div class="form-group"><label for="hadithChapterNumber">Chapter Number:</label><input type="text" id="hadithChapterNumber"></div>
+                <div class="form-group"><label for="hadithChapterName">Chapter Name (Optional):</label><input type="text" id="hadithChapterName"></div>
+                <div class="form-group"><label for="hadithSourceNumber">Source Number:</label><input type="text" id="hadithSourceNumber"></div>
+                <div class="form-group"><label for="hadithNotes">Personal Reflections/Notes:</label><textarea id="hadithNotes" rows="3"></textarea></div>
+                <div class="form-group"><label>Tags:</label><div id="hadithFormTagsContainer"></div><input type="text" id="newHadithTagInput" placeholder="Type new tag, press Enter, or select below"><div id="availableTagsForForm" class="mt-1"></div></div>
+                <div class="form-group"><label>Collections:</label><div id="availableCollectionsForForm" class="mt-1"></div></div>
+                <button type="submit" id="saveHadithButton">Save Hadith</button>
+            </form>
+        </div>
+    </div>
+    <div id="collectionModal" class="modal"> <div class="modal-content"> <div class="modal-header"> <h3 id="collectionModalTitle">Add New Collection</h3> <span class="close-button" id="closeCollectionModal">×</span> </div> <form id="collectionForm"> <input type="hidden" id="collectionId"> <div class="form-group"> <label for="collectionName">Collection Name:</label> <input type="text" id="collectionName" required> </div> <div class="form-group"> <label for="collectionDescription">Description (Optional):</label> <textarea id="collectionDescription" rows="3"></textarea> </div> <button type="submit" id="saveCollectionButton">Save Collection</button> </form> </div> </div>
+    <div id="viewCollectionModal" class="modal"> <div class="modal-content" style="max-width: 800px;"> <div class="modal-header"> <h3 id="viewCollectionModalTitle">Collection Details</h3> <span class="close-button" id="closeViewCollectionModal">×</span> </div> <div id="viewCollectionModalContent"></div> </div> </div>
+    
+    <div id="toast-container"></div>
+
+    <script>
+    // Author: Yasin Ullah
+    // Nationality: Pakistani
+    // App: Hadith Gems Offline - Final
+    (function() {
+        'use strict';
+
+        const DB_NAME = 'HadithGemsDB';
+        const DB_VERSION = 3; 
+        const HADITH_STORE = 'hadiths';
+        const TAGS_STORE = 'tags';
+        const COLLECTIONS_STORE = 'collections';
+        const SETTINGS_STORE = 'settings';
+        const CHAPTER_INFO_STORE = 'chapterInfo';
+        const EDITIONS_DATA_LOCALSTORAGE_KEY = 'hadithApiEditionsData';
+        
+        let runtimeEditionsData = {}; // Populated from localStorage or fetch
+
+        let db;
+        let currentEditingHadithId = null;
+        let currentEditingCollectionId = null;
+        let selectedTagsForForm = new Set();
+        let allHadithDataCache = []; 
+        let chapterNamesCache = {}; 
+        let currentPage = 1;
+        const ITEMS_PER_PAGE = 15;
+
+        // UI Elements
+        const pages = document.querySelectorAll('.page');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const hadithListDiv = document.getElementById('hadithList');
+        const noHadithMessage = document.getElementById('noHadithMessage');
+        const searchInput = document.getElementById('searchInput');
+        const bookFilterSelect = document.getElementById('bookFilter');
+        const chapterFilterSelect = document.getElementById('chapterFilter');
+        const tagFilterSelect = document.getElementById('tagFilter');
+        const bookmarkFilterCheckbox = document.getElementById('bookmarkFilter');
+        const paginationControlsDiv = document.getElementById('paginationControls');
+        const hotdTagFilterSelect = document.getElementById('hotdTagFilter');
+        
+        const hadithModal = document.getElementById('hadithModal');
+        const hadithModalTitle = document.getElementById('hadithModalTitle');
+        const closeHadithModalButton = document.getElementById('closeHadithModal');
+        const hadithForm = document.getElementById('hadithForm');
+        const hadithIdInput = document.getElementById('hadithId');
+        const hadithArabicTextInput = document.getElementById('hadithArabicText');
+        const hadithTranslationTextInput = document.getElementById('hadithTranslationText');
+        const hadithSourceBookInput = document.getElementById('hadithSourceBook');
+        const hadithChapterNumberInput = document.getElementById('hadithChapterNumber');
+        const hadithChapterNameInput = document.getElementById('hadithChapterName');
+        const hadithSourceNumberInput = document.getElementById('hadithSourceNumber');
+        const hadithNotesInput = document.getElementById('hadithNotes');
+        const newHadithTagInput = document.getElementById('newHadithTagInput');
+        const hadithFormTagsContainer = document.getElementById('hadithFormTagsContainer');
+        const availableTagsForFormDiv = document.getElementById('availableTagsForForm');
+        const availableCollectionsForFormDiv = document.getElementById('availableCollectionsForForm');
+        
+        const collectionModal = document.getElementById('collectionModal'); const collectionModalTitle = document.getElementById('collectionModalTitle'); const closeCollectionModalButton = document.getElementById('closeCollectionModal'); const collectionForm = document.getElementById('collectionForm'); const collectionIdInput = document.getElementById('collectionId'); const collectionNameInput = document.getElementById('collectionName'); const collectionDescriptionInput = document.getElementById('collectionDescription'); const showAddCollectionModalButton = document.getElementById('showAddCollectionModalButton');
+        const viewCollectionModal = document.getElementById('viewCollectionModal'); const closeViewCollectionModalButton = document.getElementById('closeViewCollectionModal'); const viewCollectionModalTitle = document.getElementById('viewCollectionModalTitle'); const viewCollectionModalContent = document.getElementById('viewCollectionModalContent');
+        
+        const newTagNameInput = document.getElementById('newTagName'); const addTagButton = document.getElementById('addTagButton'); const tagListUl = document.getElementById('tagList'); const noTagsMessage = document.getElementById('noTagsMessage');
+        const collectionListDiv = document.getElementById('collectionList'); const noCollectionsMessage = document.getElementById('noCollectionsMessage');
+        
+        const hadithOfTheDayContent = document.getElementById('hadithOfTheDayContent'); const refreshHadithOfTheDayButton = document.getElementById('refreshHadithOfTheDay');
+        
+        const importBookSelect = document.getElementById('importBookSelect');
+        const importArabicEditionSelect = document.getElementById('importArabicEditionSelect');
+        const importTranslationLanguageSelect = document.getElementById('importTranslationLanguageSelect');
+        const importTranslationEditionSelect = document.getElementById('importTranslationEditionSelect');
+        const importHadithButton = document.getElementById('importHadithButton');
+        const importStatusDiv = document.getElementById('importStatus');
+        const importSpinner = document.getElementById('importSpinner');
+
+        const manageBookDataBookSelect = document.getElementById('manageBookDataBookSelect');
+        const manageBookDataControlsDiv = document.getElementById('manageBookDataControls');
+        const manageBookDataLangSelect = document.getElementById('manageBookDataLangSelect');
+        const manageBookDataEditionSelect = document.getElementById('manageBookDataEditionSelect');
+        const addTranslationButton = document.getElementById('addTranslationButton');
+        const addTranslationStatusDiv = document.getElementById('addTranslationStatus');
+        const refreshChapterNamesButton = document.getElementById('refreshChapterNamesButton');
+        const refreshChapterNamesStatusDiv = document.getElementById('refreshChapterNamesStatus');
+        
+        const backupButton = document.getElementById('backupButton'); const restoreFileInput = document.getElementById('restoreFile'); const restoreButton = document.getElementById('restoreButton');
+        const themeSelector = document.getElementById('themeSelector');
+        const toastContainer = document.getElementById('toast-container');
+
+        // --- Load Editions Data ---
+        async function loadAndCacheEditionsData() {
+            const importRelatedPages = ['importHadith', 'manageBookData'];
+            const importNavLinks = navLinks.filter(link => importRelatedPages.includes(link.dataset.page));
+
+            try {
+                const response = await fetch('./editions.json'); // Assumes editions.json is in the same directory
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch editions.json: ${response.status} ${response.statusText}`);
+                }
+                const data = await response.json();
+                runtimeEditionsData = data;
+                localStorage.setItem(EDITIONS_DATA_LOCALSTORAGE_KEY, JSON.stringify(data));
+                console.log("Editions data loaded and cached from file.");
+                importNavLinks.forEach(link => link.classList.remove('disabled-feature'));
+
+            } catch (fetchError) {
+                console.warn("Failed to fetch editions.json:", fetchError.message);
+                const cachedData = localStorage.getItem(EDITIONS_DATA_LOCALSTORAGE_KEY);
+                if (cachedData) {
+                    try {
+                        runtimeEditionsData = JSON.parse(cachedData);
+                        console.log("Editions data loaded from localStorage (fetch failed).");
+                        showToast("Using cached book editions data. Could not fetch latest.", 3000);
+                        importNavLinks.forEach(link => link.classList.remove('disabled-feature'));
+                    } catch (parseError) {
+                        console.error("Error parsing cached editions data:", parseError);
+                        runtimeEditionsData = {};
+                        showToast("ERROR: Could not load book editions data. Import features disabled.", 5000);
+                        importNavLinks.forEach(link => link.classList.add('disabled-feature'));
+                    }
+                } else {
+                    runtimeEditionsData = {};
+                    showToast("CRITICAL ERROR: editions.json not found and no cache available. Import features disabled.", 5000);
+                    importNavLinks.forEach(link => link.classList.add('disabled-feature'));
+                }
+            }
+        }
+
+
+        // --- IndexedDB ---
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onupgradeneeded = event => {
+                    db = event.target.result;
+                    let hadithStore;
+                    if (!db.objectStoreNames.contains(HADITH_STORE)) {
+                        hadithStore = db.createObjectStore(HADITH_STORE, { keyPath: 'id', autoIncrement: true });
+                    } else {
+                        hadithStore = event.target.transaction.objectStore(HADITH_STORE);
+                    }
+                    if (!hadithStore.indexNames.contains('sourceBook')) hadithStore.createIndex('sourceBook', 'sourceBook', { unique: false });
+                    if (!hadithStore.indexNames.contains('tags')) hadithStore.createIndex('tags', 'tags', { multiEntry: true });
+                    if (!hadithStore.indexNames.contains('chapterNumber')) hadithStore.createIndex('chapterNumber', 'chapterNumber', { unique: false });
+                    if (!hadithStore.indexNames.contains('isBookmarked')) hadithStore.createIndex('isBookmarked', 'isBookmarked', { unique: false });
+                    if (!hadithStore.indexNames.contains('sourceBook_chapterNumber')) hadithStore.createIndex('sourceBook_chapterNumber', ['sourceBook', 'chapterNumber'], { unique: false });
+                    
+                    if (!db.objectStoreNames.contains(TAGS_STORE)) { const ts = db.createObjectStore(TAGS_STORE, { keyPath: 'id', autoIncrement: true }); ts.createIndex('name', 'name', { unique: true });}
+                    if (!db.objectStoreNames.contains(COLLECTIONS_STORE)) { const cs = db.createObjectStore(COLLECTIONS_STORE, { keyPath: 'id', autoIncrement: true }); cs.createIndex('name', 'name', { unique: true });}
+                    if (!db.objectStoreNames.contains(SETTINGS_STORE)) { db.createObjectStore(SETTINGS_STORE, { keyPath: 'key' }); }
+                    if (!db.objectStoreNames.contains(CHAPTER_INFO_STORE)) { db.createObjectStore(CHAPTER_INFO_STORE, { keyPath: 'bookKey' });}
+                };
+                request.onsuccess = event => { db = event.target.result; resolve(db); };
+                request.onerror = event => { console.error('Database error:', event.target.errorCode); reject(event.target.errorCode); };
+            });
+        }
+        function addToStore(storeName, data) { return new Promise((resolve, reject) => { if (!db) { reject("DB not initialized"); return; } const transaction = db.transaction(storeName, 'readwrite'); const store = transaction.objectStore(storeName); const request = store.add(data); request.onsuccess = () => resolve(request.result); request.onerror = (e) => { console.error(`Error adding to ${storeName}:`, e.target.error); reject(e.target.error);}; }); }
+        function getFromStore(storeName, key) { return new Promise((resolve, reject) => { if (!db) { reject("DB not initialized"); return; } const transaction = db.transaction(storeName, 'readonly'); const store = transaction.objectStore(storeName); const request = store.get(key); request.onsuccess = () => resolve(request.result); request.onerror = (e) => reject(e.target.error); }); }
+        async function getAllHadithWithCaching() { if (allHadithDataCache.length === 0) { allHadithDataCache = await getAllFromStore(HADITH_STORE); } return allHadithDataCache; }
+        function getAllFromStore(storeName) { return new Promise((resolve, reject) => { if (!db) { reject("DB not initialized"); return; } const transaction = db.transaction(storeName, 'readonly'); const store = transaction.objectStore(storeName); const request = store.getAll(); request.onsuccess = () => resolve(request.result); request.onerror = (e) => reject(e.target.error); }); }
+        function updateInStore(storeName, key, data) { return new Promise((resolve, reject) => { if (!db) { reject("DB not initialized"); return; } const transaction = db.transaction(storeName, 'readwrite'); const store = transaction.objectStore(storeName); if (store.keyPath) data[store.keyPath] = key; const request = store.put(data); request.onsuccess = () => resolve(request.result); request.onerror = (e) => { console.error(`Error updating in ${storeName}:`, e.target.error); reject(e.target.error);}; }); }
+        function deleteFromStore(storeName, key) { return new Promise((resolve, reject) => { if (!db) { reject("DB not initialized"); return; } const transaction = db.transaction(storeName, 'readwrite'); const store = transaction.objectStore(storeName); const request = store.delete(key); request.onsuccess = () => resolve(); request.onerror = (e) => reject(e.target.error); }); }
+        function clearStore(storeName) { return new Promise((resolve, reject) => { if (!db) { reject("DB not initialized"); return; } const transaction = db.transaction(storeName, 'readwrite'); const store = transaction.objectStore(storeName); const request = store.clear(); request.onsuccess = () => resolve(); request.onerror = (e) => reject(e.target.error); }); }
+        
+        function showToast(message, duration = 3000) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; toastContainer.appendChild(toast); toast.offsetHeight; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); setTimeout(() => { if (toast.parentNode === toastContainer) { toastContainer.removeChild(toast); } }, 500); }, duration); }
+
+        function navigateTo(pageId) { pages.forEach(page => page.classList.remove('active')); const targetPage = document.getElementById(pageId); if (targetPage) targetPage.classList.add('active'); navLinks.forEach(link => link.classList.remove('active')); const activeLink = document.querySelector(`.nav-link[data-page="${pageId}"]`); if (activeLink) activeLink.classList.add('active'); 
+            if (pageId === 'allHadith') { loadAndDisplayHadith(); populateBookFilter(); } 
+            if (pageId === 'tags') loadAndDisplayTags(); 
+            if (pageId === 'collections') loadAndDisplayCollections(); 
+            if (pageId === 'dashboard') displayHadithOfTheDay(); 
+            if (pageId === 'importHadith' && Object.keys(runtimeEditionsData).length > 0) { populateImportBookSelect(); populateEditionDropdownsForImport(importBookSelect.value, importTranslationLanguageSelect.value); }
+            if (pageId === 'manageBookData' && Object.keys(runtimeEditionsData).length > 0) { populateManageBookDataBookSelect(); manageBookDataControlsDiv.classList.add('hidden'); }
+        }
+        navLinks.forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); const pageId = e.target.closest('a').dataset.page; navigateTo(pageId); }); });
+        
+        function openModal(modalElement) { modalElement.style.display = 'block'; }
+        function closeModal(modalElement) { modalElement.style.display = 'none'; }
+        closeHadithModalButton.onclick = () => closeModal(hadithModal);
+        closeCollectionModalButton.onclick = () => closeModal(collectionModal);
+        closeViewCollectionModalButton.onclick = () => closeModal(viewCollectionModal);
+        window.onclick = event => { if (event.target == hadithModal) closeModal(hadithModal); if (event.target == collectionModal) closeModal(collectionModal); if (event.target == viewCollectionModal) closeModal(viewCollectionModal); };
+        document.querySelector('.nav-link[data-page="addHadith"]').addEventListener('click', (e) => { e.preventDefault(); openAddHadithModal(); });
+
+        async function addTag() { const tagName = newTagNameInput.value.trim(); if (!tagName) { showToast('Tag name cannot be empty.', 2000); return; } try { await addToStore(TAGS_STORE, { name: tagName, createdAt: new Date() }); newTagNameInput.value = ''; showToast(`Tag "${tagName}" added.`); loadAndDisplayTags(); populateTagFilter(); populateHotdTagFilter(); } catch (error) { if (error.name === 'ConstraintError') showToast(`Tag "${tagName}" already exists.`); else { console.error('Error adding tag:', error); showToast('Error adding tag.'); } } }
+        async function loadAndDisplayTags() { const tags = await getAllFromStore(TAGS_STORE); tagListUl.innerHTML = ''; if (tags.length === 0) { noTagsMessage.classList.remove('hidden'); return; } noTagsMessage.classList.add('hidden'); tags.sort((a,b) => a.name.localeCompare(b.name)).forEach(tag => { const li = document.createElement('li'); li.textContent = tag.name; li.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid var(--border-color);"; const deleteBtn = document.createElement('button'); deleteBtn.textContent = 'Delete'; deleteBtn.classList.add('danger'); deleteBtn.style.padding = '3px 6px'; deleteBtn.style.fontSize = '0.8em'; deleteBtn.onclick = async () => { if (confirm(`Delete tag "${tag.name}"? It'll be removed from all Hadith.`)) await deleteTag(tag.id, tag.name); }; li.appendChild(deleteBtn); tagListUl.appendChild(li); }); }
+        async function deleteTag(tagId, tagName) { try { const allHadiths = await getAllHadithWithCaching(); for (const hadith of allHadiths) { if (hadith.tags && hadith.tags.includes(tagName)) { hadith.tags = hadith.tags.filter(t => t !== tagName); await updateInStore(HADITH_STORE, hadith.id, hadith); } } await deleteFromStore(TAGS_STORE, tagId); showToast(`Tag "${tagName}" deleted.`); allHadithDataCache = []; loadAndDisplayTags(); loadAndDisplayHadith(); populateTagFilter(); populateHotdTagFilter(); } catch (error) { console.error('Error deleting tag:', error); showToast('Error deleting tag.'); } }
+        async function populateTagCheckboxes(containerElement, selectedTagNames = []) { const tags = await getAllFromStore(TAGS_STORE); containerElement.innerHTML = ''; if (tags.length === 0) { containerElement.innerHTML = '<p><small>No tags. Create in "Manage Tags" or type new one.</small></p>'; return; } tags.sort((a,b) => a.name.localeCompare(b.name)).forEach(tag => { const label = document.createElement('label'); const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.value = tag.name; checkbox.checked = selectedTagNames.includes(tag.name); checkbox.id = `tag-checkbox-${tag.id}-${containerElement.id.slice(-5)}`; const span = document.createElement('span'); span.textContent = tag.name; label.appendChild(checkbox); label.appendChild(span); label.htmlFor = checkbox.id; checkbox.onchange = (e) => { if (e.target.checked) selectedTagsForForm.add(tag.name); else selectedTagsForForm.delete(tag.name); renderSelectedTagsForForm(); }; containerElement.appendChild(label); }); }
+        function renderSelectedTagsForForm() { hadithFormTagsContainer.innerHTML = ''; selectedTagsForForm.forEach(tagName => { const tagDiv = document.createElement('div'); tagDiv.className = 'tag-item'; tagDiv.textContent = tagName; const removeSpan = document.createElement('span'); removeSpan.className = 'remove-tag'; removeSpan.textContent = '×'; removeSpan.onclick = () => { selectedTagsForForm.delete(tagName); renderSelectedTagsForForm(); const checkbox = availableTagsForFormDiv.querySelector(`input[value="${tagName}"]`); if (checkbox) checkbox.checked = false; }; tagDiv.appendChild(removeSpan); hadithFormTagsContainer.appendChild(tagDiv); }); }
+        newHadithTagInput.addEventListener('keypress', async (e) => { if (e.key === 'Enter') { e.preventDefault(); const newTagName = newHadithTagInput.value.trim(); if (newTagName) { selectedTagsForForm.add(newTagName); renderSelectedTagsForForm(); newHadithTagInput.value = ''; } } });
+        showAddCollectionModalButton.addEventListener('click', () => { currentEditingCollectionId = null; collectionModalTitle.textContent = 'Add New Collection'; collectionForm.reset(); openModal(collectionModal); });
+        collectionForm.addEventListener('submit', async (e) => { e.preventDefault(); const name = collectionNameInput.value.trim(); const description = collectionDescriptionInput.value.trim(); if (!name) { showToast('Collection name required.'); return; } const collectionData = { name, description, hadith_ids: currentEditingCollectionId ? (await getFromStore(COLLECTIONS_STORE, currentEditingCollectionId)).hadith_ids || [] : [], createdAt: new Date() }; try { if (currentEditingCollectionId) { collectionData.updatedAt = new Date(); await updateInStore(COLLECTIONS_STORE, currentEditingCollectionId, collectionData); showToast(`Collection "${name}" updated.`); } else { await addToStore(COLLECTIONS_STORE, collectionData); showToast(`Collection "${name}" added.`); } collectionForm.reset(); closeModal(collectionModal); loadAndDisplayCollections(); } catch (error) { if (error.name === 'ConstraintError') showToast(`Collection "${name}" already exists.`); else { console.error('Error saving collection:', error); showToast('Error saving collection.'); } } });
+        async function loadAndDisplayCollections() { const collections = await getAllFromStore(COLLECTIONS_STORE); collectionListDiv.innerHTML = ''; if (collections.length === 0) { noCollectionsMessage.classList.remove('hidden'); return; } noCollectionsMessage.classList.add('hidden'); collections.sort((a,b) => a.name.localeCompare(b.name)).forEach(collection => { const card = document.createElement('div'); card.className = 'hadith-card'; card.innerHTML = `<h3>${collection.name}</h3><p>${collection.description || 'No description.'}</p><p><small>Contains ${collection.hadith_ids ? collection.hadith_ids.length : 0} Hadith</small></p><div class="actions mt-1"><button class="view-collection-btn" data-id="${collection.id}">View</button><button class="edit-collection-btn" data-id="${collection.id}">Edit</button><button class="danger delete-collection-btn" data-id="${collection.id}">Delete</button></div>`; collectionListDiv.appendChild(card); }); document.querySelectorAll('.view-collection-btn').forEach(btn => btn.onclick = async (e) => await displayCollectionContents(parseInt(e.target.dataset.id))); document.querySelectorAll('.edit-collection-btn').forEach(btn => btn.onclick = async (e) => { const id = parseInt(e.target.dataset.id); const collection = await getFromStore(COLLECTIONS_STORE, id); if (collection) { currentEditingCollectionId = id; collectionModalTitle.textContent = 'Edit Collection'; collectionNameInput.value = collection.name; collectionDescriptionInput.value = collection.description; openModal(collectionModal); } }); document.querySelectorAll('.delete-collection-btn').forEach(btn => btn.onclick = async (e) => { const id = parseInt(e.target.dataset.id); const collection = await getFromStore(COLLECTIONS_STORE, id); if (confirm(`Delete "${collection.name}"? Hadith unlinked.`)) { if (collection.hadith_ids && collection.hadith_ids.length > 0) { for (const hadithId of collection.hadith_ids) { const hadith = await getFromStore(HADITH_STORE, hadithId); if (hadith && hadith.collection_ids) { hadith.collection_ids = hadith.collection_ids.filter(cid => cid !== id); await updateInStore(HADITH_STORE, hadith.id, hadith); } } } await deleteFromStore(COLLECTIONS_STORE, id); showToast(`Collection "${collection.name}" deleted.`); allHadithDataCache = []; loadAndDisplayCollections(); loadAndDisplayHadith(); } }); }
+        async function displayCollectionContents(collectionId) { const collection = await getFromStore(COLLECTIONS_STORE, collectionId); if (!collection) { showToast("Collection not found."); return; } viewCollectionModalTitle.textContent = `Collection: ${collection.name}`; viewCollectionModalContent.innerHTML = `<p>${collection.description || ''}</p><hr>`; if (!collection.hadith_ids || collection.hadith_ids.length === 0) { viewCollectionModalContent.innerHTML += '<p>This collection is empty.</p>'; openModal(viewCollectionModal); return; } const hadithPromises = collection.hadith_ids.map(id => getFromStore(HADITH_STORE, id)); const hadithsInCollection = (await Promise.all(hadithPromises)).filter(h => h); if (hadithsInCollection.length === 0) viewCollectionModalContent.innerHTML += '<p>Collection empty or Hadith deleted.</p>'; else hadithsInCollection.forEach(hadith => viewCollectionModalContent.appendChild(createHadithCard(hadith, false))); openModal(viewCollectionModal); }
+        async function populateCollectionCheckboxes(containerElement, selectedCollectionIds = []) { const collections = await getAllFromStore(COLLECTIONS_STORE); containerElement.innerHTML = ''; if (collections.length === 0) { containerElement.innerHTML = '<p><small>No collections. Create in "Manage Collections".</small></p>'; return; } collections.sort((a,b) => a.name.localeCompare(b.name)).forEach(collection => { const label = document.createElement('label'); const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.value = collection.id; checkbox.checked = selectedCollectionIds.includes(collection.id); checkbox.id = `collection-checkbox-${collection.id}`; const span = document.createElement('span'); span.textContent = collection.name; label.appendChild(checkbox); label.appendChild(span); label.htmlFor = checkbox.id; containerElement.appendChild(label); }); }
+
+        function openAddHadithModal() { currentEditingHadithId = null; hadithModalTitle.textContent = 'Add New Hadith'; hadithForm.reset(); selectedTagsForForm.clear(); renderSelectedTagsForForm(); populateTagCheckboxes(availableTagsForFormDiv, []); populateCollectionCheckboxes(availableCollectionsForFormDiv, []); openModal(hadithModal); }
+        async function openEditHadithModal(hadithId) { const hadith = await getFromStore(HADITH_STORE, hadithId); if (!hadith) { showToast('Hadith not found.'); return; } currentEditingHadithId = hadithId; hadithModalTitle.textContent = 'Edit Hadith'; hadithIdInput.value = hadith.id; hadithArabicTextInput.value = hadith.arabicText || ''; hadithTranslationTextInput.value = hadith.primaryTranslationText || (hadith.translations && hadith.translations.length > 0 ? hadith.translations[0].text : ''); hadithSourceBookInput.value = hadith.sourceBook; hadithChapterNumberInput.value = hadith.chapterNumber || ''; hadithChapterNameInput.value = hadith.chapterName || ''; hadithSourceNumberInput.value = hadith.sourceNumber || ''; hadithNotesInput.value = hadith.notes || ''; selectedTagsForForm = new Set(hadith.tags || []); renderSelectedTagsForForm(); populateTagCheckboxes(availableTagsForFormDiv, hadith.tags || []); populateCollectionCheckboxes(availableCollectionsForFormDiv, hadith.collection_ids || []); openModal(hadithModal); }
+        hadithForm.addEventListener('submit', async (e) => { e.preventDefault(); const arabicText = hadithArabicTextInput.value.trim(); const primaryTranslationText = hadithTranslationTextInput.value.trim(); const sourceBook = hadithSourceBookInput.value.trim(); const chapterNumber = hadithChapterNumberInput.value.trim(); const chapterName = hadithChapterNameInput.value.trim(); const sourceNumber = hadithSourceNumberInput.value.trim(); const notes = hadithNotesInput.value.trim(); if (!primaryTranslationText || !sourceBook) { showToast('Primary Translation and Source Book required.'); return; } const finalSelectedTags = new Set(selectedTagsForForm); availableTagsForFormDiv.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => finalSelectedTags.add(cb.value)); const allDbTags = await getAllFromStore(TAGS_STORE); const dbTagNames = allDbTags.map(t => t.name); for (const tagName of finalSelectedTags) { if (!dbTagNames.includes(tagName)) try { await addToStore(TAGS_STORE, { name: tagName, createdAt: new Date() }); } catch (err) {} } const selectedCollectionIds = []; availableCollectionsForFormDiv.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => selectedCollectionIds.push(parseInt(cb.value))); let existingHadith = null; if(currentEditingHadithId) existingHadith = await getFromStore(HADITH_STORE, currentEditingHadithId); const hadithData = { arabicText, primaryTranslationText, sourceBook, chapterNumber, chapterName, sourceNumber, notes, tags: Array.from(finalSelectedTags), collection_ids: selectedCollectionIds, translations: existingHadith ? existingHadith.translations || [] : [], isBookmarked: existingHadith ? existingHadith.isBookmarked || false : false, updatedAt: new Date() }; if (!currentEditingHadithId || (existingHadith && existingHadith.primaryTranslationText !== primaryTranslationText)) { const primaryTransObj = { lang_code: 'manual-eng', edition_name: 'Manual Entry', text: primaryTranslationText }; const existingManualEngIndex = hadithData.translations.findIndex(t => t.edition_name === 'Manual Entry'); if (existingManualEngIndex > -1) hadithData.translations[existingManualEngIndex] = primaryTransObj; else hadithData.translations.unshift(primaryTransObj); } try { let savedHadithId; if (currentEditingHadithId) { hadithData.id = currentEditingHadithId; savedHadithId = await updateInStore(HADITH_STORE, currentEditingHadithId, hadithData); showToast('Hadith updated.'); } else { hadithData.createdAt = new Date(); savedHadithId = await addToStore(HADITH_STORE, hadithData); showToast('Hadith added.'); } allHadithDataCache = []; hadithForm.reset(); closeModal(hadithModal); loadAndDisplayHadith(); populateBookFilter(); populateTagFilter(); populateHotdTagFilter(); displayHadithOfTheDay(); } catch (error) { console.error('Error saving Hadith:', error); showToast('Error saving Hadith.'); } });
+        async function deleteHadith(hadithId) { try { await deleteFromStore(HADITH_STORE, hadithId); showToast('Hadith deleted.'); allHadithDataCache = []; loadAndDisplayHadith(); populateBookFilter(); displayHadithOfTheDay(); } catch (error) { console.error('Error deleting Hadith:', error); showToast('Error deleting Hadith.'); } }
+        async function toggleBookmark(hadithId) { const hadith = await getFromStore(HADITH_STORE, hadithId); if (!hadith) return; hadith.isBookmarked = !hadith.isBookmarked; await updateInStore(HADITH_STORE, hadithId, hadith); allHadithDataCache = []; loadAndDisplayHadith(searchInput.value, bookFilterSelect.value, chapterFilterSelect.value, tagFilterSelect.value, bookmarkFilterCheckbox.checked, currentPage); showToast(hadith.isBookmarked ? 'Bookmarked!' : 'Bookmark removed.'); }
+
+        function createHadithCard(hadith, includeActions = true) {
+            const card = document.createElement('div'); card.className = 'hadith-card'; card.dataset.id = hadith.id;
+            let tagsDisplay = 'No tags'; if (hadith.tags && hadith.tags.length > 0) tagsDisplay = hadith.tags.map(tag => `<span class="tag-item" style="background-color: var(--secondary-color); margin-right: 5px; padding: 2px 5px; font-size:0.8em;">${tag}</span>`).join('');
+            const chapterDisplay = hadith.chapterName ? `${hadith.chapterName} (Ch. ${hadith.chapterNumber || 'N/A'})` : (hadith.chapterNumber ? `Chapter ${hadith.chapterNumber}` : '');
+            const chapterInfoHtml = chapterDisplay ? `<p class="chapter-info"><strong>Chapter:</strong> ${chapterDisplay}</p>` : '';
+            let translationSelectorHtml = '';
+            if (hadith.translations && hadith.translations.length > 0) { // Show selector even for 1 to indicate which one it is
+                translationSelectorHtml = `<div class="translation-selector-container"><label for="trans-select-${hadith.id}">View Translation:</label><select id="trans-select-${hadith.id}" data-hadith-id="${hadith.id}">`;
+                hadith.translations.forEach((trans, index) => {
+                    const langName = trans.lang_code === 'manual-eng' ? 'Manual (Eng)' : `${trans.lang_code.toUpperCase()} - ${trans.edition_name.split('-').pop()}`;
+                    // Check if this translation is the primary one
+                    const isPrimary = hadith.primaryTranslationText === trans.text;
+                    translationSelectorHtml += `<option value="${index}" ${isPrimary ? 'selected' : ''}>${langName}</option>`;
+                });
+                translationSelectorHtml += `</select></div>`;
+            }
+            const displayedTranslationText = hadith.primaryTranslationText || (hadith.translations && hadith.translations.length > 0 ? hadith.translations[0].text : 'No translation available.');
+            card.innerHTML = `<button class="bookmark-btn ${hadith.isBookmarked ? 'bookmarked' : ''}" title="Toggle Bookmark">${hadith.isBookmarked ? '★' : '☆'}</button> ${hadith.arabicText ? `<div class="arabic-text">${hadith.arabicText}</div>` : ''} ${translationSelectorHtml} <div class="translation-display-area" id="translation-display-${hadith.id}"><div class="translation-text">${displayedTranslationText}</div></div> <p class="source"><strong>Source:</strong> ${hadith.sourceBook} ${hadith.sourceNumber || ''}</p> ${chapterInfoHtml} ${hadith.notes ? `<p class="notes"><strong>Notes:</strong> ${hadith.notes}</p>` : ''} <p class="tags-display"><strong>Tags:</strong> ${tagsDisplay}</p> ${includeActions ? `<div class="actions mt-1"><button class="edit-hadith-btn">Edit</button><button class="delete-hadith-btn danger">Delete</button></div>` : ''}`;
+            card.querySelector('.bookmark-btn').addEventListener('click', () => toggleBookmark(hadith.id));
+            if (includeActions) { card.querySelector('.edit-hadith-btn').addEventListener('click', () => openEditHadithModal(hadith.id)); card.querySelector('.delete-hadith-btn').addEventListener('click', () => { if (confirm('Delete this Hadith?')) deleteHadith(hadith.id); }); }
+            const transSelect = card.querySelector(`#trans-select-${hadith.id}`);
+            if (transSelect) {
+                transSelect.addEventListener('change', async (e) => {
+                    const selectedIndex = parseInt(e.target.value);
+                    const displayArea = card.querySelector(`#translation-display-${hadith.id} .translation-text`);
+                    const currentHadith = await getFromStore(HADITH_STORE, parseInt(card.dataset.id)); // Fetch fresh hadith data
+                    if (currentHadith && currentHadith.translations && currentHadith.translations[selectedIndex]) {
+                        displayArea.textContent = currentHadith.translations[selectedIndex].text;
+                    }
+                });
+            }
+            return card;
+        }
+        async function loadAndDisplayHadith(filterQuery = '', filterBook = '', filterChapter = '', filterTag = '', filterBookmark = false, page = 1) {
+            currentPage = page; let hadiths = await getAllHadithWithCaching();
+            if (filterQuery) { const query = filterQuery.toLowerCase(); hadiths = hadiths.filter(h => (h.arabicText && h.arabicText.toLowerCase().includes(query)) || (h.primaryTranslationText && h.primaryTranslationText.toLowerCase().includes(query)) || (h.translations && h.translations.some(t => t.text && t.text.toLowerCase().includes(query))) || (h.notes && h.notes.toLowerCase().includes(query)) || (h.sourceBook && h.sourceBook.toLowerCase().includes(query)) || (h.sourceNumber && String(h.sourceNumber).toLowerCase().includes(query)) || (h.chapterNumber && String(h.chapterNumber).toLowerCase().includes(query)) || (h.chapterName && h.chapterName.toLowerCase().includes(query)) ); }
+            if (filterBook) hadiths = hadiths.filter(h => h.sourceBook === filterBook);
+            if (filterChapter) hadiths = hadiths.filter(h => String(h.chapterNumber) === String(filterChapter));
+            if (filterTag) hadiths = hadiths.filter(h => h.tags && h.tags.includes(filterTag));
+            if (filterBookmark) hadiths = hadiths.filter(h => h.isBookmarked);
+            hadiths.sort((a,b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt));
+            const totalItems = hadiths.length; const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE); const paginatedHadiths = hadiths.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+            hadithListDiv.innerHTML = ''; if (paginatedHadiths.length === 0) noHadithMessage.classList.remove('hidden'); else { noHadithMessage.classList.add('hidden'); paginatedHadiths.forEach(hadith => hadithListDiv.appendChild(createHadithCard(hadith))); }
+            renderPaginationControls(totalPages, page);
+        }
+        function renderPaginationControls(totalPages, currentPage) { paginationControlsDiv.innerHTML = ''; if (totalPages <= 1) return; const prevButton = document.createElement('button'); prevButton.textContent = 'Previous'; prevButton.disabled = currentPage === 1; prevButton.onclick = () => loadAndDisplayHadith(searchInput.value, bookFilterSelect.value, chapterFilterSelect.value, tagFilterSelect.value, bookmarkFilterCheckbox.checked, currentPage - 1); paginationControlsDiv.appendChild(prevButton); const pageInfo = document.createElement('span'); pageInfo.textContent = `Page ${currentPage} of ${totalPages}`; paginationControlsDiv.appendChild(pageInfo); const nextButton = document.createElement('button'); nextButton.textContent = 'Next'; nextButton.disabled = currentPage === totalPages; nextButton.onclick = () => loadAndDisplayHadith(searchInput.value, bookFilterSelect.value, chapterFilterSelect.value, tagFilterSelect.value, bookmarkFilterCheckbox.checked, currentPage + 1); paginationControlsDiv.appendChild(nextButton); }
+        async function populateBookFilter() { const hadiths = await getAllHadithWithCaching(); const bookNames = [...new Set(hadiths.map(h => h.sourceBook))].sort(); const currentBookVal = bookFilterSelect.value; bookFilterSelect.innerHTML = '<option value="">All Books</option>'; bookNames.forEach(name => { if (!name) return; const option = document.createElement('option'); option.value = name; option.textContent = name; bookFilterSelect.appendChild(option); }); bookFilterSelect.value = currentBookVal; populateChapterFilter(bookFilterSelect.value); }
+        async function populateChapterFilter(selectedBook) { const currentChapterVal = chapterFilterSelect.value; chapterFilterSelect.innerHTML = '<option value="">All Chapters</option>'; if (!selectedBook) { chapterFilterSelect.disabled = true; return; } chapterFilterSelect.disabled = false; const hadiths = await getAllHadithWithCaching(); const bookKey = Object.keys(runtimeEditionsData).find(k => runtimeEditionsData[k] && runtimeEditionsData[k].name === selectedBook) || selectedBook.toLowerCase().replace(/\s+/g, ''); const bookChapterInfo = chapterNamesCache[bookKey] || {}; const chapters = [...new Set(hadiths.filter(h => h.sourceBook === selectedBook && h.chapterNumber).map(h => String(h.chapterNumber)))].sort((a, b) => parseInt(a) - parseInt(b)); chapters.forEach(num => { const option = document.createElement('option'); option.value = num; const chapterName = bookChapterInfo[num] || ''; option.textContent = chapterName ? `${chapterName} (Ch. ${num})` : `Chapter ${num}`; chapterFilterSelect.appendChild(option); }); if (chapters.includes(currentChapterVal)) chapterFilterSelect.value = currentChapterVal; }
+        searchInput.addEventListener('input', () => loadAndDisplayHadith(searchInput.value, bookFilterSelect.value, chapterFilterSelect.value, tagFilterSelect.value, bookmarkFilterCheckbox.checked, 1));
+        bookFilterSelect.addEventListener('change', () => { populateChapterFilter(bookFilterSelect.value); loadAndDisplayHadith(searchInput.value, bookFilterSelect.value, '', tagFilterSelect.value, bookmarkFilterCheckbox.checked, 1); });
+        chapterFilterSelect.addEventListener('change', () => loadAndDisplayHadith(searchInput.value, bookFilterSelect.value, chapterFilterSelect.value, tagFilterSelect.value, bookmarkFilterCheckbox.checked, 1));
+        tagFilterSelect.addEventListener('change', () => loadAndDisplayHadith(searchInput.value, bookFilterSelect.value, chapterFilterSelect.value, tagFilterSelect.value, bookmarkFilterCheckbox.checked, 1));
+        bookmarkFilterCheckbox.addEventListener('change', () => loadAndDisplayHadith(searchInput.value, bookFilterSelect.value, chapterFilterSelect.value, tagFilterSelect.value, bookmarkFilterCheckbox.checked, 1));
+        async function populateTagFilter() { const tags = await getAllFromStore(TAGS_STORE); tagFilterSelect.innerHTML = '<option value="">All Tags</option>'; tags.sort((a,b) => a.name.localeCompare(b.name)).forEach(tag => { const option = document.createElement('option'); option.value = tag.name; option.textContent = tag.name; tagFilterSelect.appendChild(option); }); }
+        async function populateHotdTagFilter() { const tags = await getAllFromStore(TAGS_STORE); hotdTagFilterSelect.innerHTML = '<option value="">All Hadith</option>'; tags.sort((a,b) => a.name.localeCompare(b.name)).forEach(tag => { const option = document.createElement('option'); option.value = tag.name; option.textContent = tag.name; hotdTagFilterSelect.appendChild(option); }); }
+        async function displayHadithOfTheDay(filterTag = null) { let hadiths = await getAllHadithWithCaching(); if (filterTag) hadiths = hadiths.filter(h => h.tags && h.tags.includes(filterTag)); if (hadiths.length === 0) { hadithOfTheDayContent.innerHTML = 'No Hadith available.'; return; } const randomIndex = Math.floor(Math.random() * hadiths.length); hadithOfTheDayContent.innerHTML = ''; hadithOfTheDayContent.appendChild(createHadithCard(hadiths[randomIndex], false)); }
+        refreshHadithOfTheDayButton.addEventListener('click', () => displayHadithOfTheDay(hotdTagFilterSelect.value));
+
+        function populateImportBookSelect() { importBookSelect.innerHTML = ''; Object.keys(runtimeEditionsData).forEach(key => { if (!runtimeEditionsData[key] || !runtimeEditionsData[key].name) return; const option = document.createElement('option'); option.value = key; option.textContent = runtimeEditionsData[key].name; importBookSelect.appendChild(option); }); }
+        function populateEditionDropdownsForImport(bookKey, langShortCode) { const bookMeta = runtimeEditionsData[bookKey]; if (!bookMeta || !bookMeta.collection) { importArabicEditionSelect.innerHTML = '<option value="">N/A</option>'; importTranslationEditionSelect.innerHTML = '<option value="">N/A</option>'; return; } importArabicEditionSelect.innerHTML = ''; bookMeta.collection.filter(ed => ed.language.toLowerCase() === 'arabic').forEach(ed => { const option = document.createElement('option'); option.value = ed.name; option.textContent = `${ed.name} (${ed.comments || 'Standard'})`; importArabicEditionSelect.appendChild(option); }); if (importArabicEditionSelect.options.length > 0) { const preferredArabic = Array.from(importArabicEditionSelect.options).find(opt => opt.value.endsWith('1')) || importArabicEditionSelect.options[0]; if(preferredArabic) importArabicEditionSelect.value = preferredArabic.value; } importTranslationEditionSelect.innerHTML = ''; bookMeta.collection.filter(ed => ed.name.startsWith(langShortCode + '-')).forEach(ed => { const option = document.createElement('option'); option.value = ed.name; option.textContent = `${ed.name} (by ${ed.author || 'Unknown'})`; importTranslationEditionSelect.appendChild(option); }); if (importTranslationEditionSelect.options.length > 0) importTranslationEditionSelect.value = importTranslationEditionSelect.options[0].value; else importTranslationEditionSelect.innerHTML = `<option value="">No ${langShortCode.toUpperCase()} editions</option>`; }
+        importBookSelect.addEventListener('change', (e) => populateEditionDropdownsForImport(e.target.value, importTranslationLanguageSelect.value));
+        importTranslationLanguageSelect.addEventListener('change', (e) => populateEditionDropdownsForImport(importBookSelect.value, e.target.value));
+        async function fetchAndStoreChapterNames(bookKeyToFetch) { try { const response = await fetch(`https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/info/${bookKeyToFetch}.json`); if (!response.ok) throw new Error(`Fetch chapter info fail: ${response.status}`); const infoData = await response.json(); if (infoData.metadata && infoData.metadata.sections) { await updateInStore(CHAPTER_INFO_STORE, bookKeyToFetch, { bookKey: bookKeyToFetch, sections: infoData.metadata.sections }); chapterNamesCache[bookKeyToFetch] = infoData.metadata.sections; return infoData.metadata.sections; } } catch (error) { console.error(`Error fetching chapter names for ${bookKeyToFetch}:`, error); } return null; }
+        importHadithButton.addEventListener('click', async () => { const bookKey = importBookSelect.value; const selectedArabicEditionName = importArabicEditionSelect.value; const selectedPrimaryTranslationEditionName = importTranslationEditionSelect.value; if (!bookKey || !selectedArabicEditionName || !selectedPrimaryTranslationEditionName) { showToast("Select book, Arabic, and Primary Translation editions."); return; } if (!runtimeEditionsData[bookKey] || !runtimeEditionsData[bookKey].collection.find(ed => ed.name === selectedArabicEditionName) || !runtimeEditionsData[bookKey].collection.find(ed => ed.name === selectedPrimaryTranslationEditionName)) { showToast("Invalid edition selection."); return; } importStatusDiv.textContent = 'Starting import...'; importSpinner.classList.remove('hidden'); importHadithButton.disabled = true; let importedCount = 0; let failedCount = 0; const bookMeta = runtimeEditionsData[bookKey]; const arabicEditionMeta = bookMeta.collection.find(ed => ed.name === selectedArabicEditionName); const primaryTranslationEditionMeta = bookMeta.collection.find(ed => ed.name === selectedPrimaryTranslationEditionName); try { const bookChapterInfo = await fetchAndStoreChapterNames(bookKey) || {}; importStatusDiv.textContent = `Fetching Arabic: ${arabicEditionMeta.name}...`; const arabicResponse = await fetch(arabicEditionMeta.linkmin); if (!arabicResponse.ok) throw new Error(`Fetch Arabic failed: ${arabicResponse.status}`); const arabicData = await arabicResponse.json(); const arabicHadithsArray = arabicData.hadiths || []; const arabicHadithMap = new Map(arabicHadithsArray.map(h => [String(h.hadithnumber), h])); importStatusDiv.textContent = `Fetched ${arabicHadithsArray.length} Arabic. Fetching Primary Translation: ${primaryTranslationEditionMeta.name}...`; const primaryTranslationResponse = await fetch(primaryTranslationEditionMeta.linkmin); if (!primaryTranslationResponse.ok) throw new Error(`Fetch Primary Translation failed: ${primaryTranslationResponse.status}`); const primaryTranslationData = await primaryTranslationResponse.json(); const primaryTranslationHadithsArray = primaryTranslationData.hadiths || []; importStatusDiv.textContent = `Fetched ${primaryTranslationHadithsArray.length} Primary Translation. Processing...`; const allHadithNumbers = new Set([...arabicHadithsArray.map(h => String(h.hadithnumber)), ...primaryTranslationHadithsArray.map(h => String(h.hadithnumber))]); for (const hadithNumStr of allHadithNumbers) { const araHadith = arabicHadithMap.get(hadithNumStr); const primTransHadith = primaryTranslationHadithsArray.find(h => String(h.hadithnumber) === hadithNumStr); const araText = araHadith ? araHadith.text : ''; const primTransText = primTransHadith ? primTransHadith.text : ''; if (!araText && !primTransText) { failedCount++; continue; } let chapterNum = null; let chapterName = null; const refSource = primTransHadith || araHadith; if (refSource && refSource.reference && refSource.reference.book !== undefined) { chapterNum = String(refSource.reference.book); chapterName = bookChapterInfo[chapterNum] || null; } let sourceNumToStore = hadithNumStr; if (refSource && refSource.reference && refSource.reference.hadith !== undefined) sourceNumToStore = `${refSource.reference.book}:${refSource.reference.hadith}`; else if (refSource && refSource.hadithnumber) sourceNumToStore = String(refSource.hadithnumber); const translationsArray = []; if (primTransText) { translationsArray.push({ lang_code: primaryTranslationEditionMeta.name.substring(0,3), edition_name: primaryTranslationEditionMeta.name, text: primTransText }); } const hadithData = { arabicText: araText, primaryTranslationText: primTransText, sourceBook: bookMeta.name, chapterNumber: chapterNum, chapterName: chapterName, sourceNumber: sourceNumToStore, translations: translationsArray, notes: `Imported. Ara: ${selectedArabicEditionName}, Prim.Trans: ${selectedPrimaryTranslationEditionName}`, tags: [bookKey, bookMeta.name.replace(/\s+/g, '')], isBookmarked: false, createdAt: new Date(), updatedAt: new Date() }; try { await addToStore(HADITH_STORE, hadithData); importedCount++; if (importedCount % 100 === 0) { importStatusDiv.textContent = `Processed ${importedCount} Hadith...`; await new Promise(r => setTimeout(r, 10)); } } catch (dbErr) { failedCount++; console.warn(`DB Save Fail: ${bookMeta.name} #${hadithNumStr}`, dbErr.message); } } showToast(`Import of ${bookMeta.name} complete. Added: ${importedCount}, Failed/Skipped: ${failedCount}.`); importStatusDiv.textContent = `Import of ${bookMeta.name} complete. Added: ${importedCount}, Failed/Skipped: ${failedCount}.`; allHadithDataCache = []; } catch (error) { showToast(`Import failed: ${error.message}.`, 5000); importStatusDiv.textContent = `Error: ${error.message}`; console.error("Import error:", error); } finally { importSpinner.classList.add('hidden'); importHadithButton.disabled = false; loadAndDisplayHadith(); populateBookFilter(); populateTagFilter(); populateHotdTagFilter(); displayHadithOfTheDay(); populateManageBookDataBookSelect(); } });
+
+        async function populateManageBookDataBookSelect() { const hadiths = await getAllHadithWithCaching(); const bookNames = [...new Set(hadiths.map(h => h.sourceBook))].sort(); manageBookDataBookSelect.innerHTML = '<option value="">-- Select a Book --</option>'; bookNames.forEach(name => { if (!name) return; const option = document.createElement('option'); option.value = name; option.textContent = name; manageBookDataBookSelect.appendChild(option); }); }
+        manageBookDataBookSelect.addEventListener('change', (e) => { const selectedBookName = e.target.value; if (selectedBookName) { manageBookDataControlsDiv.classList.remove('hidden'); const bookKey = Object.keys(runtimeEditionsData).find(key => runtimeEditionsData[key] && runtimeEditionsData[key].name === selectedBookName); if (bookKey) { manageBookDataLangSelect.innerHTML = ''; const availableLangs = new Set(); runtimeEditionsData[bookKey].collection.forEach(ed => { if (ed.language.toLowerCase() !== 'arabic') availableLangs.add(ed.language); }); availableLangs.forEach(lang => { const option = document.createElement('option'); option.value = lang.substring(0,3).toLowerCase(); option.textContent = lang; manageBookDataLangSelect.appendChild(option); }); if (manageBookDataLangSelect.options.length > 0) { populateManageBookDataEditionSelect(bookKey, manageBookDataLangSelect.value); } else { manageBookDataEditionSelect.innerHTML = '<option value="">No other translations</option>'; } } else { manageBookDataControlsDiv.classList.add('hidden'); } } else { manageBookDataControlsDiv.classList.add('hidden'); } });
+        manageBookDataLangSelect.addEventListener('change', (e) => { const selectedBookName = manageBookDataBookSelect.value; const bookKey = Object.keys(runtimeEditionsData).find(key => runtimeEditionsData[key] && runtimeEditionsData[key].name === selectedBookName); if (bookKey) populateManageBookDataEditionSelect(bookKey, e.target.value); });
+        function populateManageBookDataEditionSelect(bookKey, langShortCode) { const bookMeta = runtimeEditionsData[bookKey]; manageBookDataEditionSelect.innerHTML = ''; if (!bookMeta || !bookMeta.collection) { manageBookDataEditionSelect.innerHTML = '<option value="">N/A</option>'; return; } bookMeta.collection.filter(ed => ed.name.startsWith(langShortCode + '-') && ed.language.toLowerCase() !== 'arabic').forEach(ed => { const option = document.createElement('option'); option.value = ed.name; option.textContent = `${ed.name} (by ${ed.author || 'Unknown'})`; manageBookDataEditionSelect.appendChild(option); }); if (manageBookDataEditionSelect.options.length === 0) manageBookDataEditionSelect.innerHTML = `<option value="">No ${langShortCode.toUpperCase()} editions</option>`; }
+        addTranslationButton.addEventListener('click', async () => { const selectedBookName = manageBookDataBookSelect.value; const editionNameToAdd = manageBookDataEditionSelect.value; if (!selectedBookName || !editionNameToAdd) { showToast("Select book and edition to add."); return; } const bookKey = Object.keys(runtimeEditionsData).find(key => runtimeEditionsData[key] && runtimeEditionsData[key].name === selectedBookName); if (!bookKey) { showToast("Book key not found."); return; } const editionMeta = runtimeEditionsData[bookKey].collection.find(ed => ed.name === editionNameToAdd); if (!editionMeta) { showToast("Edition metadata not found."); return; } addTranslationStatusDiv.textContent = `Fetching ${editionMeta.name}...`; addTranslationButton.disabled = true; try { const response = await fetch(editionMeta.linkmin); if (!response.ok) throw new Error(`Fetch failed: ${response.status}`); const translationData = await response.json(); const newTranslationsArray = translationData.hadiths || []; const hadithsOfThisBook = (await getAllHadithWithCaching()).filter(h => h.sourceBook === selectedBookName); let updatedCount = 0; for (const hadith of hadithsOfThisBook) { const newTransHadith = newTranslationsArray.find(nt => String(nt.hadithnumber) === String(hadith.sourceNumber) || (hadith.sourceNumber.includes(':') && String(nt.hadithnumber) === hadith.sourceNumber.split(':')[1] && String(nt.reference.book) === hadith.sourceNumber.split(':')[0])); if (newTransHadith && newTransHadith.text) { hadith.translations = hadith.translations || []; if (!hadith.translations.find(t => t.edition_name === editionMeta.name)) { hadith.translations.push({ lang_code: editionMeta.name.substring(0,3), edition_name: editionMeta.name, text: newTransHadith.text }); await updateInStore(HADITH_STORE, hadith.id, hadith); updatedCount++; } } } allHadithDataCache = []; addTranslationStatusDiv.textContent = `Added ${editionMeta.name} to ${updatedCount} Hadith in ${selectedBookName}.`; showToast(`Translation added to ${updatedCount} Hadith.`); } catch (error) { addTranslationStatusDiv.textContent = `Error: ${error.message}`; console.error("Error adding translation:", error); } finally { addTranslationButton.disabled = false; } });
+        refreshChapterNamesButton.addEventListener('click', async () => { const selectedBookName = manageBookDataBookSelect.value; if (!selectedBookName) { showToast("Select a book first."); return; } const bookKey = Object.keys(runtimeEditionsData).find(key => runtimeEditionsData[key] && runtimeEditionsData[key].name === selectedBookName); if (!bookKey) { showToast("Book key not found."); return; } refreshChapterNamesStatusDiv.textContent = `Refreshing chapter names for ${selectedBookName}...`; refreshChapterNamesButton.disabled = true; try { const newChapterInfo = await fetchAndStoreChapterNames(bookKey); if (newChapterInfo) { const hadithsOfThisBook = (await getAllHadithWithCaching()).filter(h => h.sourceBook === selectedBookName); let updatedCount = 0; for (const hadith of hadithsOfThisBook) { if (hadith.chapterNumber && newChapterInfo[String(hadith.chapterNumber)]) { hadith.chapterName = newChapterInfo[String(hadith.chapterNumber)]; await updateInStore(HADITH_STORE, hadith.id, hadith); updatedCount++; } } allHadithDataCache = []; refreshChapterNamesStatusDiv.textContent = `Chapter names updated for ${updatedCount} Hadith in ${selectedBookName}.`; showToast("Chapter names refreshed."); populateChapterFilter(selectedBookName); } else { refreshChapterNamesStatusDiv.textContent = `Could not fetch chapter names for ${selectedBookName}.`; } } catch (error) { refreshChapterNamesStatusDiv.textContent = `Error: ${error.message}`; console.error("Error refreshing chapter names:", error); } finally { refreshChapterNamesButton.disabled = false; } });
+
+        backupButton.addEventListener('click', async () => { try { const backupData = { hadiths: await getAllFromStore(HADITH_STORE), tags: await getAllFromStore(TAGS_STORE), collections: await getAllFromStore(COLLECTIONS_STORE), settings: await getAllFromStore(SETTINGS_STORE), chapterInfo: await getAllFromStore(CHAPTER_INFO_STORE), exportDate: new Date().toISOString() }; const jsonString = JSON.stringify(backupData, null, 2); const blob = new Blob([jsonString], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `hadith_gems_backup_${new Date().toISOString().slice(0,10)}.json`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); showToast('Backup successful.'); } catch (error) { console.error('Backup error:', error); showToast('Backup failed.'); } });
+        restoreButton.addEventListener('click', async () => { const file = restoreFileInput.files[0]; if (!file) { showToast('Select backup file.'); return; } if (!confirm("Overwrite all current data?")) return; const reader = new FileReader(); reader.onload = async (event) => { try { const backupData = JSON.parse(event.target.result); await clearStore(HADITH_STORE); await clearStore(TAGS_STORE); await clearStore(COLLECTIONS_STORE); await clearStore(SETTINGS_STORE); await clearStore(CHAPTER_INFO_STORE); if (backupData.hadiths) for (const item of backupData.hadiths) await addToStore(HADITH_STORE, item); if (backupData.tags) for (const item of backupData.tags) await addToStore(TAGS_STORE, item); if (backupData.collections) for (const item of backupData.collections) await addToStore(COLLECTIONS_STORE, item); if (backupData.settings) for (const item of backupData.settings) await addToStore(SETTINGS_STORE, item); if (backupData.chapterInfo) for (const item of backupData.chapterInfo) await addToStore(CHAPTER_INFO_STORE, item); showToast('Data restored.'); allHadithDataCache = []; chapterNamesCache = {}; const infos = await getAllFromStore(CHAPTER_INFO_STORE); infos.forEach(info => chapterNamesCache[info.bookKey] = info.sections); loadAndDisplayHadith(); populateBookFilter(); populateTagFilter(); populateHotdTagFilter(); displayHadithOfTheDay(); loadSettings(); populateManageBookDataBookSelect(); } catch (error) { console.error('Restore error:', error); showToast('Restore failed.'); } finally { restoreFileInput.value = ''; } }; reader.readAsText(file); });
+        async function applyTheme(themeName) { document.body.className = ''; if (themeName === 'light') document.body.classList.add('theme-light'); else if (themeName === 'futuristic') document.body.classList.add('theme-futuristic'); else document.body.classList.add('theme-manuscript-dark'); try { await updateInStore(SETTINGS_STORE, 'theme', { key: 'theme', value: themeName }); } catch (e) { try { await addToStore(SETTINGS_STORE, { key: 'theme', value: themeName }); } catch (addError) { console.warn("Could not save theme setting:", addError); } } }
+        async function loadSettings() { try { const themeSetting = await getFromStore(SETTINGS_STORE, 'theme'); if (themeSetting && themeSetting.value) { themeSelector.value = themeSetting.value; applyTheme(themeSetting.value); } else applyTheme('manuscript-dark'); } catch (error) { console.warn("Could not load theme settings:", error); applyTheme('manuscript-dark'); } }
+        themeSelector.addEventListener('change', (e) => applyTheme(e.target.value));
+
+        async function initializeApp() {
+            try {
+                await loadAndCacheEditionsData(); // Load editions.json first
+                await initDB(); showToast('Database initialized.', 1500);
+                await loadSettings();
+                const chapterInfos = await getAllFromStore(CHAPTER_INFO_STORE);
+                chapterInfos.forEach(info => chapterNamesCache[info.bookKey] = info.sections);
+                allHadithDataCache = await getAllFromStore(HADITH_STORE); 
+                
+                navigateTo('dashboard'); 
+                loadAndDisplayHadith(); 
+                populateBookFilter(); 
+                populateTagFilter(); 
+                populateHotdTagFilter(); 
+                displayHadithOfTheDay();
+                addTagButton.addEventListener('click', addTag);
+                if (Object.keys(runtimeEditionsData).length > 0) { // Only populate if editions data loaded
+                    populateImportBookSelect();
+                    populateEditionDropdownsForImport(importBookSelect.value, importTranslationLanguageSelect.value); 
+                    populateManageBookDataBookSelect();
+                }
+            } catch (error) { console.error('Failed to initialize application:', error); document.body.innerHTML = '<p style="color:red; padding:20px;">Error: Could not initialize. Check console.</p>'; }
+        }
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+Okay, here's a prompt for Gemini Pro to generate the Hadith Gems Offline app, incorporating the local data file structure and updated requirements:
+
+---
+
+**Prompt for Gemini Pro:**
+
+Generate a single HTML file application: "Hadith Gems Offline," by Yasin Ullah (Pakistani). This app is a personal, offline-first tool for collecting, organizing, and reflecting on Hadith.
+
+**Core Data Storage:**
+All data (Hadith, tags, notes, collections, settings, chapter info) must be stored in IndexedDB. Implement robust backup/restore functionality for all IndexedDB data, including any cached metadata like `localInfoJSONData` if applicable. Define clear object stores:
+*   `hadiths`: { id (autoIncrement), uuid (unique), arabicText, translations: [{editionName, language, text, author}], primaryTranslationEditionName, sourceBookKey, sourceBookName, sourceChapterNumber, sourceChapterName, sourceHadithNumberInBook, apiHadithNumber (from source files/info.json), grades: [{name, grade}], notes, tags (array), bookmarked, createdAt, updatedAt }
+*   `tags`: { name (primaryKey), createdAt }
+*   `collections`: { id (autoIncrement), name (unique), description, hadith_uuids (array), createdAt, updatedAt }
+*   `chapterInfo`: { bookKey (primaryKey), name, chapters: { "chapter_num_str": "chapter_name_str" }, totalHadithInBook }
+*   `settings`: { key (primaryKey), value }
+
+**Core App Functionality:**
+
+1.  **Hadith Management:**
+    *   Manually input Hadith: Arabic text, primary translation (text, language, edition/author), source (book name, chapter #/name, Hadith #), personal notes.
+    *   Store multiple translations per Hadith.
+    *   Bookmark individual Hadith.
+
+2.  **Organization:**
+    *   Create custom tags and assign multiple tags to Hadith.
+    *   Create thematic collections and add Hadith (by UUID) to them.
+    *   Manage tags and collections (create, edit, delete).
+
+3.  **Display & Interaction:**
+    *   "All Hadith" view: Filter by keyword, book, chapter, tag, bookmark status. Implement pagination.
+    *   Hadith cards: Display Arabic, current translation (with selector for multiple), source details, chapter name, grades, tags, and notes.
+    *   "Hadith of the Day": Randomly select a Hadith, with an optional tag filter.
+
+**Data Import from Local Files (Key Feature):**
+
+*   **Source of Hadith Data:** All Hadith data will be imported from local files.
+    *   **Hadith Text Files (`.txt`):**
+        *   Located in a subfolder named `Ahadith Books in single file yasin/` (relative to the HTML file).
+        *   Filename format: `{edition_name}.txt` (e.g., `Ahadith Books in single file yasin/ara-bukhari.txt`, `Ahadith Books in single file yasin/eng-bukhari.txt`).
+        *   Content format: Each line represents one Hadith: `hadithnumber | hadith_text_content`. The `hadithnumber` corresponds to `apiHadithNumber`.
+    *   **Metadata & Chapter Information File (`info.json`):**
+        *   A single `info.json` file located in the same directory as the HTML app.
+        *   This file contains metadata, chapter names, Hadith-specific references (book/chapter/hadith numbers within the book), and grades for all supported books.
+        *   Structure example for one book entry in `info.json`:
+            ```json
+            {
+              "bukhari": { // bookKey
+                "metadata": {
+                  "name": "Sahih al Bukhari",
+                  "sections": { // Chapter numbers (as strings) to chapter names
+                    "1": "Revelation",
+                    "2": "Belief"
+                  },
+                  "last_hadithnumber": 7563 // Corresponds to apiHadithNumber
+                },
+                "hadiths": [ // Array of Hadith details
+                  {
+                    "hadithnumber": 1, // Corresponds to apiHadithNumber
+                    "arabicnumber": 1, // Can be ignored if not needed for display
+                    "grades": [
+                      {"name": "Salim al-Hilali", "grade": "Sahih"}
+                    ],
+                    "reference": { // Source reference within the book
+                      "book": 1,    // sourceChapterNumber
+                      "hadith": 1   // sourceHadithNumberInBook
+                    }
+                  }
+                  // ... more hadiths
+                ]
+              }
+              // ... more books
+            }
+            ```
+        *   The application should attempt to load this `info.json` at startup. If successful, cache its content in `localStorage` (e.g., as `localInfoJSONCache`) for subsequent offline use. If fetching from file and cache both fail, disable import features.
+
+*   **Embedded `editions.json` Handling:**
+    *   The app will have an `editions.json` data structure embedded directly within a `<script type="application/json" id="editionsData">` tag in the HTML.
+    *   This JSON defines available Hadith books and their corresponding *local* edition names (which match the `.txt` filenames without the extension). It does **not** contain CDN links.
+    *   Example structure for embedded `editions.json`:
+        ```json
+        {
+          "bukhari": { // bookKey
+            "name": "Sahih al Bukhari",
+            "collection": [
+              {"name": "ara-bukhari", "book": "bukhari", "author": "Unknown", "language": "Arabic"},
+              {"name": "eng-bukhari", "book": "bukhari", "author": "Muhsin Khan", "language": "English"}
+              // ... other editions for this book
+            ]
+          }
+          // ... other books
+        }
+        ```
+
+*   **Import Process UI:**
+    *   User selects a Hadith book from a dropdown (populated from the embedded `editions.json`).
+    *   User selects specific editions for Arabic text and a primary translation from dropdowns (populated based on the selected book's `collection` in embedded `editions.json`).
+
+*   **Import Logic:**
+    1.  Identify the `bookKey` (e.g., "bukhari") from the selected book.
+    2.  Fetch and parse the content of the selected Arabic edition's `.txt` file (e.g., `Ahadith Books in single file yasin/ara-bukhari.txt`). Store as `hadithnumber -> arabic_text`.
+    3.  Fetch and parse the content of the selected primary translation edition's `.txt` file. Store as `hadithnumber -> translation_text`.
+    4.  Access the relevant book's data from the loaded `localInfoJSONData` using the `bookKey`.
+    5.  Iterate through the `hadiths` array in `localInfoJSONData[bookKey].hadiths`:
+        *   For each `apiHadithDetail` object:
+            *   `apiHadithNumber = apiHadithDetail.hadithnumber`.
+            *   Retrieve Arabic text from parsed Arabic file using `apiHadithNumber`.
+            *   Retrieve primary translation text from parsed translation file using `apiHadithNumber`.
+            *   If either text is missing, skip this Hadith or log an error.
+            *   `sourceChapterNumber = String(apiHadithDetail.reference.book)`.
+            *   `sourceHadithNumberInBook = String(apiHadithDetail.reference.hadith)`.
+            *   `sourceChapterName = localInfoJSONData[bookKey].metadata.sections[sourceChapterNumber]`.
+            *   `grades = apiHadithDetail.grades`.
+            *   Check if a Hadith with the same `apiHadithNumber`, `sourceBookKey`, and `primaryTranslationEditionName` already exists in IndexedDB to prevent duplicates. If so, skip.
+            *   Construct the Hadith object for IndexedDB (as per `hadiths` store schema) and add it.
+            *   Automatically tag imported Hadith with `bookKey` and the book's full name (from `localInfoJSONData[bookKey].metadata.name`).
+    6.  Store the chapter mapping (`localInfoJSONData[bookKey].metadata.sections`) for the imported book in the `chapterInfo` IndexedDB store, using `bookKey`.
+    7.  Provide clear progress updates and error messages during import.
+
+**Advanced Features (Adapted for Local Data):**
+
+*   **Manage Book Data:**
+    *   **Refresh Chapter Names:** For an imported book, re-read its chapter information from the loaded `localInfoJSONData` and update the corresponding entry in the `chapterInfo` store. Also, iterate through existing Hadith of that book in the DB and update their `sourceChapterName` if it differs.
+    *   **Add Another Translation Edition:**
+        *   User selects an imported book and a new (non-Arabic) translation edition from the embedded `editions.json`.
+        *   Fetch and parse the corresponding local `.txt` file for this new edition.
+        *   For each Hadith of the selected book already in IndexedDB, find its `apiHadithNumber`.
+        *   Retrieve the new translation text using this `apiHadithNumber` from the parsed new edition file.
+        *   Add this new translation object to the `translations` array of the existing Hadith entry in IndexedDB, ensuring no duplicate `editionName` for that Hadith.
+
+**Technical & UI/UX Requirements:**
+
+*   **Single HTML File:** All CSS and JavaScript must be embedded.
+*   **Offline First:** Fully functional offline after initial asset loading (if any, though primary data is local).
+*   **UI/UX:** Scholarly, reflective, "digital manuscript library" aesthetic. Excellent Arabic/translation readability. Responsive design. Customizable themes (Dark, Light, Futuristic).
+*   **Error Handling:** Clear user feedback for all operations, especially file access and parsing during import. If `info.json` or required `.txt` files are missing/malformed, disable relevant import options or show clear errors.
+*   **Code Quality:** Well-structured, modular, bug-free, and maintainable JavaScript.
+
+---

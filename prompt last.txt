@@ -1,0 +1,33 @@
+Develop 'Hadith Gems Offline,' a single-HTML file application by Yasin Ullah (Pakistani), for personal Hadith study. The app must be fully offline-functional, storing all user data (Hadith, notes, tags, collections, settings, and imported book/chapter metadata) in IndexedDB with robust backup/restore.
+Core Features:
+Manual Hadith Entry: Input Arabic, multiple translations, source (book, chapter, number), notes. Bookmark Hadith.
+Organization: Create/manage custom tags and thematic collections for Hadith.
+Display:
+'All Hadith' view: Filter by keyword, book, chapter, tag, bookmark; paginated.
+Hadith Cards: Display Arabic, switchable translations, source, chapter, tags, notes, grades.
+'Hadith of the Day': Random selection, optional tag filter.
+Data Import (Local First):
+The app will primarily import Hadith data from local files.
+editions.json (Provided/Embedded): This JSON structure defines available Hadith books. For each book (e.g., identified by a key like 'bukhari'), it lists its display name and the names of available local edition files (e.g., ara-bukhari.txt, eng-bukhari.txt, urd-bukhari.txt), specifying language and author for each edition.
+Local Hadith Text Files: These files (e.g., ara-bukhari.txt) are expected in a designated local directory. Each line in these files represents a single Hadith, formatted as: {hadith_identifier_part} | {hadith_text_content}. The {hadith_identifier_part} can contain various text but must include the unique Hadith number for that file. The parsing logic must robustly extract this number (typically the last sequence of digits before the first pipe '|') and the {hadith_text_content} (everything after the first pipe).
+Local info.json File: A single, comprehensive info.json file, located locally, provides detailed metadata for all importable books. For each book key (matching those in editions.json):
+It contains the full book name.
+It includes chapter information (e.g., under a metadata.sections object, mapping chapter numbers to chapter names).
+It provides an array of Hadith objects (e.g., under a hadiths array), where each object contains its hadithnumber (this number corresponds to the identifier in the text files), grades (an array of grading objects), and a reference object (containing book for chapter number and hadith for the Hadith's number within that chapter/book).
+Import UI & Process:
+User selects a book (defined in editions.json).
+User selects the local Arabic edition file and a local primary translation edition file for that book.
+The application reads the content of these selected local text files.
+It consults the local info.json (using the selected book's key) to:
+Retrieve chapter names using the reference.book value from info.json's Hadith objects.
+Retrieve grades and other metadata using the hadithnumber from info.json's Hadith objects.
+For each Hadith, store its Arabic text, the selected primary translation, source details (book name, Hadith number from the text file, chapter number/name from info.json), and grades in IndexedDB. Automatically tag imported Hadith with the book's key and full name.
+Advanced Features (Local File Based):
+Allow users to add more local translation edition files to an already imported book.
+Provide a way to refresh chapter names for an imported book using the data from the local info.json.
+UI/UX & Technical Requirements:
+Scholarly, reflective, and organized "digital manuscript library" aesthetic.
+Excellent readability for Arabic and translations. Responsive design.
+Customizable themes (e.g., Dark, Light, Futuristic).
+Clear user feedback for all operations, especially import and data management.
+Well-structured, bug-free, and maintainable JavaScript, CSS, and HTML, all within a single file.

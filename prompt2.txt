@@ -1,0 +1,41 @@
+Create a single HTML file application named "Hadith Gems Offline" by Yasin Ullah (Pakistani). This application is a personal, offline-first tool for managing and reflecting on Hadith. All user-generated data (tags, notes, collections, settings) and imported Hadith data must be stored in IndexedDB. The app should include robust backup and restore functionality for the IndexedDB data.
+
+**Core App Functionality:**
+
+1.  **Hadith Management:**
+    *   Allow users to manually input Hadith with fields for Arabic text, primary translation, source details (book name, chapter #/name, Hadith #), and personal notes.
+    *   Implement a bookmarking feature for individual Hadith.
+    *   Provide functionality to edit and delete manually added or imported Hadith.
+
+2.  **Organization:**
+    *   Users can create custom tags and assign multiple tags to Hadith.
+    *   Users can create thematic collections and add Hadith to them.
+    *   Provide interfaces to manage tags and collections (create, edit, delete).
+
+3.  **Display & Interaction:**
+    *   An "All Hadith" view with filtering options (by keyword in text/notes, book, chapter, tag, bookmark status) and pagination.
+    *   Display Hadith cards showing Arabic text, primary translation, source details, associated chapter name (if available), tags, and notes.
+    *   A "Hadith of the Day" feature displaying a random Hadith, with an option to filter by tag.
+
+**Data Import (Key Feature):**
+
+*   **Source of Hadith Data:** The application will import Hadith data from local `.txt` files located in a subfolder named "Ahadith Books in single file yasin" within the same directory as the HTML file. The file names follow the pattern `{language}-{bookname}.txt` (e.g., `ara-bukhari1.txt`, `eng-muslim.txt`).
+*   **`info.json` Handling:** The application must fetch a local `info.json` file (located in the same directory as the HTML file) at startup. This file contains metadata about the Hadith books, including chapter names and number ranges. Cache this data in a indexdb  JavaScript variable for use during import. If fetching fails, disable import features.
+*   **Import Process:**
+    *   Provide a UI for users to select a Hadith book, an Arabic edition file, and a primary translation edition file based on the available local `.txt` files and the `info.json` data.
+    *   Fetch the content of the selected Arabic and primary translation `.txt` files.
+    *   Parse each line of the `.txt` files, assuming the format `{hadithnumber} | {hadithcontent}`.
+    *   For each Hadith, store its Arabic text, the selected primary translation, and its source details (book name from `info.json`, Hadith number parsed from the file, and chapter number/name determined by matching the Hadith number to the ranges in `info.json`).
+    *   Automatically tag imported Hadith with the book's short code (e.g., 'bukhari') and full name (e.g., 'Sahih al Bukhari') from `info.json`.
+    *   Handle potential parsing errors in the `.txt` files gracefully.
+
+**Technical & UI/UX Requirements:**
+
+*   **Single HTML File:** All CSS and JavaScript must be embedded within the single HTML file.
+*   **Offline First:** The application must be fully functional offline after the initial load and data import.
+*   **IndexedDB:** Use IndexedDB for all data persistence. Define clear object stores for `hadiths`, `tags`, `collections`, `settings`, and `chapterInfo`.
+*   **UI/UX:** Design a scholarly, reflective, and organized "digital manuscript library" aesthetic. Ensure excellent Arabic and translation readability. Implement a responsive design. Include customizable themes (Light, Dark, Futuristic).
+*   **Error Handling:** Provide clear user feedback for operations like import, backup, and restore.
+*   **Code Quality:** The code should be well-structured, bug-free, and maintainable. Avoid using external libraries or frameworks.
+
+This prompt incorporates the user's specific requirement to use local `.txt` files and the local `info.json` file for data import, while retaining the core functionalities and technical constraints of the previous request. It also clarifies the expected format of the local data files.

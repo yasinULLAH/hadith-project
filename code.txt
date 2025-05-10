@@ -1,0 +1,86 @@
+# Hadith Gems Offline | حدیث جیمز آف لائن
+
+---
+
+**English** | **اردو**
+------- | --------
+💎 **Hadith Gems Offline** is a personal, offline-first desktop application designed for the dedicated student of Hadith. It allows you to collect, organize, reflect upon, and manage your personal Hadith library with ease and privacy. All your precious data stays with you, on your computer. <br> *Author: Yasin Ullah (Pakistani)* | 💎 **حدیث جیمز آف لائن** حدیث کے سنجیدہ طالب علم کے لیے ڈیزائن کردہ ایک ذاتی، آف لائن فرسٹ ڈیسک ٹاپ ایپلی کیشن ہے۔ یہ آپ کو آسانی اور رازداری کے ساتھ اپنی ذاتی حدیث لائبریری کو جمع کرنے، منظم کرنے، اس پر غور کرنے اور اس کا انتظام کرنے کی سہولت فراہم کرتا ہے۔ آپ کا تمام قیمتی ڈیٹا آپ کے ساتھ، آپ کے کمپیوٹر پر رہتا ہے۔ <br> *مصنف: یاسین اللہ (پاکستانی)*
+
+---
+
+## 🌟 Features | 🌟 خصوصیات
+
+**English** | **اردو**
+------- | --------
+*   **📖 Offline First:** Fully functional without an internet connection. Your data, your control. | *   **📖 آف لائن فرسٹ:** انٹرنیٹ کنکشن کے بغیر مکمل طور پر فعال۔ آپ کا ڈیٹا، آپ کا کنٹرول۔
+*   **🗄️ Local Data Storage:** All Hadith, notes, tags, collections, and settings are securely stored in your browser's IndexedDB. | *   **🗄️ مقامی ڈیٹا اسٹوریج:** تمام احادیث، نوٹس، ٹیگز، مجموعے، اور سیٹنگز محفوظ طریقے سے آپ کے براؤزر کے IndexedDB میں محفوظ ہیں۔
+*   **📥 Robust Local Import:** Import Hadith collections from your locally stored text files (`.txt`) and a central `info.json` metadata file. | *   **📥 مضبوط مقامی امپورٹ:** اپنی مقامی طور پر محفوظ کردہ ٹیکسٹ فائلوں (`.txt`) اور ایک مرکزی `info.json` میٹا ڈیٹا فائل سے حدیث کے مجموعے درآمد کریں۔
+    *   Flexible parsing for Hadith text files (format: `{identifier_part} | {hadith_text}`). |     *   حدیث ٹیکسٹ فائلوں کے لیے لچکدار پارسنگ (فارمیٹ: `{شناختی حصہ} | {حدیث کا متن}`۔
+    *   Comprehensive metadata (chapters, grades) sourced from `info.json`. |     *   `info.json` سے جامع میٹا ڈیٹا (ابواب، درجات)۔
+*   **✍️ Manual Hadith Entry:** Add Hadith manually with Arabic text, multiple translations, detailed source information (book, chapter #/name, Hadith #), and personal notes. | *   **✍️ دستی حدیث اندراج:** عربی متن، متعدد تراجم، تفصیلی ماخذ معلومات (کتاب، باب نمبر/نام، حدیث نمبر)، اور ذاتی نوٹس کے ساتھ دستی طور پر احادیث شامل کریں۔
+*   **📚 Multiple Translations:** Store and switch between different translations for a single Hadith. | *   **📚 متعدد تراجم:** ایک ہی حدیث کے لیے مختلف تراجم ذخیرہ کریں اور ان کے درمیان سوئچ کریں۔
+*   **🔖 Bookmarking:** Easily bookmark your favorite or important Hadith for quick access. | *   **🔖 بک مارکنگ:** فوری رسائی کے لیے اپنی پسندیدہ یا اہم احادیث کو آسانی سے بک مارک کریں۔
+*   **🏷️ Tagging System:** Create custom tags and assign multiple tags to Hadith for thematic organization. Manage your tags (create, edit, delete). | *   **🏷️ ٹیگنگ سسٹم:** موضوعاتی تنظیم کے لیے حسب ضرورت ٹیگز بنائیں اور احادیث کو متعدد ٹیگز تفویض کریں۔ اپنے ٹیگز کا نظم کریں (بنائیں، ترمیم کریں، حذف کریں)۔
+*   **📦 Collections:** Group Hadith into thematic collections. Manage collections (create, edit, delete, add/remove Hadith). | *   **📦 مجموعے:** احادیث کو موضوعاتی مجموعوں میں گروپ کریں۔ مجموعوں کا نظم کریں (بنائیں، ترمیم کریں، حذف کریں، احادیث شامل/حذف کریں)۔
+*   **🔍 Advanced Search & Filtering:** Find Hadith quickly by keyword (in Arabic, translation, or notes), book, chapter, tag, or bookmark status in the "All Hadith" view. | *   **🔍 جدید تلاش اور فلٹرنگ:** "تمام احادیث" منظر میں کلیدی لفظ (عربی، ترجمہ، یا نوٹس میں)، کتاب، باب، ٹیگ، یا بک مارک کی حیثیت سے احادیث کو تیزی سے تلاش کریں۔
+*   **☀️ Hadith of the Day:** Discover a random Hadith daily, with an option to filter by tag. | *   **☀️ آج کی حدیث:** روزانہ ایک بے ترتیب حدیث دریافت کریں، ٹیگ کے ذریعے فلٹر کرنے کے آپشن کے ساتھ۔
+*   **🎨 Customizable Themes:** Personalize your reading experience with Light (Manuscript), Dark, and Futuristic themes. | *   **🎨 حسب ضرورت تھیمز:** لائٹ (مخطوطہ)، ڈارک، اور فیوچرسٹک تھیمز کے ساتھ اپنے پڑھنے کے تجربے کو ذاتی بنائیں۔
+*   **🔄 Backup & Restore:** Secure your entire Hadith library with a simple backup-to-JSON feature and restore when needed. | *   **🔄 بیک اپ اور بحالی:** اپنی پوری حدیث لائبریری کو ایک سادہ بیک اپ ٹو JSON فیچر کے ساتھ محفوظ کریں اور ضرورت پڑنے پر بحال کریں۔
+*   **📜 Scholarly Aesthetic:** Designed with a clean, readable, and reflective interface suitable for serious study. | *   **📜 علمی جمالیات:** سنجیدہ مطالعہ کے لیے موزوں، صاف، پڑھنے کے قابل، اور غور و فکر پر مبنی انٹرفیس کے ساتھ ڈیزائن کیا گیا ہے۔
+*   **📱 Responsive Design:** Use it comfortably on various screen sizes. | *   **📱 ریسپانسیو ڈیزائن:** مختلف اسکرین سائز پر آرام سے استعمال کریں۔
+*   **🌍 Single File Application:** The entire application is contained within a single HTML file for maximum portability and ease of use. | *   **🌍 سنگل فائل ایپلی کیشن:** زیادہ سے زیادہ پورٹیبلٹی اور استعمال میں آسانی کے لیے پوری ایپلی کیشن ایک ہی HTML فائل میں موجود ہے۔
+
+---
+
+**English** | **اردو**
+------- | --------
+*   Main "All Hadith" view with filters. | *   فلٹرز کے ساتھ مرکزی "تمام احادیث" کا منظر۔
+*   A Hadith card showing Arabic, translation, and details. | *   ایک حدیث کارڈ جس میں عربی، ترجمہ، اور تفصیلات دکھائی گئی ہیں۔
+*   The local import interface. | *   مقامی امپورٹ انٹرفیس۔
+*   Tag management or Collection management view. | *   ٹیگ مینجمنٹ یا کلیکشن مینجمنٹ کا منظر۔
+*   Settings view with theme selection. | *   تھیم سلیکشن کے ساتھ سیٹنگز کا منظر۔
+
+## 🛠️ Setup & Usage | 🛠️ سیٹ اپ اور استعمال
+
+**English** | **اردو**
+------- | --------
+1.  **Download:** Download the `HadithGemsOffline.html` file. | 1.  **ڈاؤن لوڈ:** `HadithGemsOffline.html` فائل ڈاؤن لوڈ کریں۔
+2.  **Local Data Files (for Import):** | 2.  **مقامی ڈیٹا فائلیں (امپورٹ کے لیے):**
+    *   Create a folder named `Ahadith Books in single file yasin` in the *same directory* as `HadithGemsOffline.html`. |     *   `HadithGemsOffline.html` کے *اسی ڈائرکٹری* میں `Ahadith Books in single file yasin` نامی ایک فولڈر بنائیں۔
+    *   Place your Hadith text files (e.g., `ara-bukhari.txt`, `eng-bukhari.txt`) inside this folder. Ensure they follow the format: `{hadith_number_part} | {hadith_text}` per line. |     *   اپنی حدیث ٹیکسٹ فائلیں (مثلاً `ara-bukhari.txt`, `eng-bukhari.txt`) اس فولڈر کے اندر رکھیں۔ یقینی بنائیں کہ وہ فی لائن فارمیٹ پر عمل کریں: `{حدیث نمبر کا حصہ} | {حدیث کا متن}`۔
+    *   Place your comprehensive `info.json` file in the *same directory* as `HadithGemsOffline.html`. This file contains metadata like chapter names and Hadith grades. |     *   اپنی جامع `info.json` فائل `HadithGemsOffline.html` کے *اسی ڈائرکٹری* میں رکھیں۔ اس فائل میں میٹا ڈیٹا جیسے باب کے نام اور حدیث کے درجات شامل ہیں۔
+    *   An `editions.json` structure is embedded within the HTML file. This defines the books and their corresponding local file names for the import UI. You can modify this within the HTML if your local file names differ or you add new books. |     *   ایک `editions.json` ڈھانچہ HTML فائل کے اندر ایمبیڈ کیا گیا ہے۔ یہ امپورٹ UI کے لیے کتابوں اور ان کی متعلقہ مقامی فائل ناموں کی وضاحت کرتا ہے۔ اگر آپ کی مقامی فائل کے نام مختلف ہیں یا آپ نئی کتابیں شامل کرتے ہیں تو آپ اسے HTML کے اندر تبدیل کر سکتے ہیں۔
+3.  **Open:** Open `HadithGemsOffline.html` in a modern web browser (Chrome, Firefox, Edge recommended). | 3.  **کھولیں:** `HadithGemsOffline.html` کو ایک جدید ویب براؤزر (کروم، فائر فاکس، ایج تجویز کردہ) میں کھولیں۔
+4.  **Import (Optional but Recommended):** | 4.  **امپورٹ (اختیاری لیکن تجویز کردہ):**
+    *   Navigate to the "Import Hadith" section. |     *   "امپورٹ حدیث" سیکشن پر جائیں۔
+    *   Select the book, Arabic edition file, and primary translation edition file from the dropdowns (these are populated based on `editions.json` and expect corresponding `.txt` files in the local folder). |     *   ڈراپ ڈاؤن سے کتاب، عربی ایڈیشن فائل، اور بنیادی ترجمہ ایڈیشن فائل منتخب کریں (یہ `editions.json` کی بنیاد پر آباد ہیں اور مقامی فولڈر میں متعلقہ `.txt` فائلوں کی توقع رکھتے ہیں)۔
+    *   Click "Start Import". The app will read your local files and populate the database. |     *   "امپورٹ شروع کریں" پر کلک کریں۔ ایپ آپ کی مقامی فائلوں کو پڑھے گی اور ڈیٹا بیس کو آباد کرے گی۔
+5.  **Explore:** Use the navigation to add Hadith manually, browse, search, tag, create collections, and customize settings. | 5.  **دریافت کریں:** دستی طور پر احادیث شامل کرنے، براؤز کرنے، تلاش کرنے، ٹیگ کرنے، مجموعے بنانے، اور سیٹنگز کو حسب ضرورت بنانے کے لیے نیویگیشن کا استعمال کریں۔
+
+---
+
+## 💻 Technical Details | 💻 تکنیکی تفصیلات
+
+**English** | **اردو**
+------- | --------
+*   **Frontend:** HTML, CSS, Vanilla JavaScript (ES6+) | *   **فرنٹ اینڈ:** HTML، CSS، ونیلا جاوا اسکرپٹ (ES6+)
+*   **Database:** IndexedDB (Browser's built-in database) | *   **ڈیٹا بیس:** IndexedDB (براؤزر کا بلٹ ان ڈیٹا بیس)
+*   **Data Format for Import:** Local `.txt` files for Hadith text and a local `info.json` for metadata. | *   **امپورٹ کے لیے ڈیٹا فارمیٹ:** حدیث متن کے لیے مقامی `.txt` فائلیں اور میٹا ڈیٹا کے لیے ایک مقامی `info.json`۔
+
+---
+
+## 🙏 Acknowledgements | 🙏 اعترافات
+
+**English** | **اردو**
+------- | --------
+*   The structure and initial concept for Hadith data organization and API interaction (though now adapted for local files) were inspired by the work of Fawazahmed0 on the [Hadith API](https://github.com/fawazahmed0/hadith-api). | *   حدیث ڈیٹا کی تنظیم اور API تعامل (اگرچہ اب مقامی فائلوں کے لیے ڈھال لیا گیا ہے) کے لیے ڈھانچہ اور ابتدائی تصور [حدیث API](https://github.com/fawazahmed0/hadith-api) پر فواز احمد0 کے کام سے متاثر تھا۔
+
+---
+
+## 📜 License | 📜 لائسنس
+
+**English** | **اردو**
+------- | --------
+This project is for personal use. Please respect the licenses and terms of use of any Hadith data sources you use with this application. | یہ پروجیکٹ ذاتی استعمال کے لیے ہے۔ براہ کرم اس ایپلی کیشن کے ساتھ استعمال ہونے والے کسی بھی حدیث ڈیٹا ماخذ کے لائسنس اور استعمال کی شرائط کا احترام کریں۔
+
+---

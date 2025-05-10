@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hadith Gems Offline</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Roboto:wght@400;700&display=swap');
+
+        :root {
+            --bg-color: #f4f1e9;
+            --text-color: #333;
+            --primary-color: #a87f5a;
+            --secondary-color: #d4c1a5;
+            --border-color: #ccc;
+            --card-bg: #fff;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #2c3e50;
+            --text-color: #ecf0f1;
+            --primary-color: #e74c3c;
+            --secondary-color: #bdc3c7;
+            --border-color: #555;
+            --card-bg: #34495e;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        header h1 {
+            margin: 0;
+            font-family: 'Amiri', serif;
+        }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        nav button {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 8px 15px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        nav button:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .content-section {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-family: 'Amiri', serif;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        form input[type="text"],
+        form textarea,
+        form select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        form textarea {
+            min-height: 100px;
+            font-family: 'Amiri', serif;
+            direction: rtl;
+            text-align: right;
+        }
+
+        form button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        form button:hover {
+            background-color: #8a6a4a;
+        }
+
+        #hadithList, #tagList, #collectionList {
+            list-style: none;
+            padding: 0;
+        }
+
+        .hadith-item, .tag-item, .collection-item {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px var(--shadow-color);
+        }
+
+        .hadith-item h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-family: 'Amiri', serif;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .hadith-item p {
+            margin-bottom: 10px;
+        }
+
+        .hadith-item .source {
+            font-style: italic;
+            color: #666;
+        }
+
+        .hadith-item .tags span {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            padding: 3px 8px;
+            margin-right: 5px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .hadith-item .notes {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border-color);
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        .hadith-item button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-left: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .hadith-item button:hover {
+            background-color: #c0392b;
+        }
+
+        #searchBar {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        #hadithOfTheDay {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        #hadithOfTheDay h3 {
+            color: var(--primary-color);
+            font-family: 'Amiri', serif;
+            direction: rtl;
+            text-align: right;
+        }
+
+        #hadithOfTheDay .source {
+            font-style: italic;
+            color: #666;
+        }
+
+        #hadithOfTheDay .notes {
+             margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border-color);
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        .tag-input-container {
+            margin-bottom: 15px;
+        }
+
+        .tag-input-container input {
+            width: calc(100% - 80px);
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .tag-input-container button {
+            width: 70px;
+            display: inline-block;
+            vertical-align: top;
+            margin-left: 5px;
+        }
+
+        .selected-tags {
+            margin-top: 10px;
+        }
+
+        .selected-tags span {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            padding: 5px 10px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
+        .selected-tags span:hover {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            width: 80%;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px var(--shadow-color);
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #backupRestoreSection input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        #backupRestoreSection button {
+            margin-right: 10px;
+        }
+
+        .theme-switcher {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--secondary-color);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            cursor: pointer;
+        }
+
+        .theme-switcher:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            font-size: 0.9em;
+        }
+
+        #importHadithSection select {
+            width: calc(50% - 11px);
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+         #importHadithSection button {
+            display: inline-block;
+        }
+
+        #importHadithSection .hadith-preview {
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px dashed var(--border-color);
+            border-radius: 4px;
+            background-color: var(--bg-color);
+        }
+
+         #importHadithSection .hadith-preview h4 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-family: 'Amiri', serif;
+            direction: rtl;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Hadith Gems Offline</h1>
+        <nav>
+            <button onclick="showSection('addHadithSection')">Add Hadith</button>
+            <button onclick="showSection('viewHadithSection')">View Hadith</button>
+            <button onclick="showSection('tagsSection')">Tags</button>
+            <button onclick="showSection('collectionsSection')">Collections</button>
+            <button onclick="showSection('importHadithSection')">Import Hadith</button>
+            <button onclick="showSection('backupRestoreSection')">Backup/Restore</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        <section id="addHadithSection" class="content-section active">
+            <h2>Add New Hadith</h2>
+            <form id="addHadithForm">
+                <label for="arabicText">Arabic Text:</label>
+                <textarea id="arabicText" required></textarea>
+
+                <label for="translationText">Translation:</label>
+                <textarea id="translationText" required></textarea>
+
+                <label for="source">Source (e.g., Sahih Bukhari, Hadith No.):</label>
+                <input type="text" id="source" required>
+
+                <label for="notes">Personal Notes:</label>
+                <textarea id="notes"></textarea>
+
+                <div class="tag-input-container">
+                    <label for="hadithTags">Tags (comma separated or select below):</label>
+                    <input type="text" id="hadithTagsInput" placeholder="Enter new tag">
+                    <button type="button" onclick="addTagFromInput()">Add Tag</button>
+                </div>
+                <div id="availableTags" class="selected-tags"></div>
+                <div id="selectedTags" class="selected-tags"></div>
+
+
+                <button type="submit">Save Hadith</button>
+            </form>
+        </section>
+
+        <section id="viewHadithSection" class="content-section">
+            <h2>View All Hadith</h2>
+            <input type="text" id="searchBar" placeholder="Search Hadith, Translation, Notes, or Tags...">
+            <ul id="hadithList">
+                <!-- Hadith items will be loaded here -->
+            </ul>
+            <div id="hadithOfTheDay">
+                <h3>Hadith of the Day</h3>
+                <div id="hotdContent">Loading...</div>
+            </div>
+        </section>
+
+        <section id="tagsSection" class="content-section">
+            <h2>Manage Tags</h2>
+            <div class="tag-input-container">
+                <label for="newTagName">Add New Tag:</label>
+                <input type="text" id="newTagName" placeholder="Enter new tag name">
+                <button type="button" onclick="addNewTag()">Add Tag</button>
+            </div>
+            <ul id="tagList">
+                <!-- Tags will be loaded here -->
+            </ul>
+        </section>
+
+        <section id="collectionsSection" class="content-section">
+            <h2>Manage Collections</h2>
+            <div class="tag-input-container">
+                <label for="newCollectionName">Add New Collection:</label>
+                <input type="text" id="newCollectionName" placeholder="Enter new collection name">
+                <button type="button" onclick="addNewCollection()">Add Collection</button>
+            </div>
+            <ul id="collectionList">
+                <!-- Collections will be loaded here -->
+            </ul>
+            <h3>Export Collections</h3>
+            <select id="exportCollectionSelect">
+                <option value="">Select a Collection</option>
+            </select>
+            <button onclick="exportCollection()">Export Selected Collection</button>
+            <button onclick="exportAllHadith()">Export All Hadith</button>
+        </section>
+
+         <section id="importHadithSection" class="content-section">
+            <h2>Import Hadith from API</h2>
+            <p>Select a Hadith collection and language to import Hadith.</p>
+            <label for="hadithCollectionSelect">Select Collection:</label>
+            <select id="hadithCollectionSelect">
+                <option value="">Loading collections...</option>
+            </select>
+
+            <label for="hadithLanguageSelect">Select Language:</label>
+            <select id="hadithLanguageSelect" disabled>
+                <option value="">Select a collection first</option>
+            </select>
+
+            <button onclick="importAllFromCollection()">Import Selected Collection</button>
+
+             <p id="importStatus"></p>
+        </section>
+
+
+        <section id="backupRestoreSection" class="content-section">
+            <h2>Backup and Restore</h2>
+            <button onclick="backupData()">Backup Data</button>
+            <input type="file" id="restoreFile" accept=".json">
+            <button onclick="restoreData()">Restore Data</button>
+        </section>
+    </div>
+
+    <div class="theme-switcher" onclick="toggleTheme()">
+        Switch Theme
+    </div>
+
+    <footer>
+        <p>© 2023 Hadith Gems Offline. Developed by Yasin Ullah.</p>
+    </footer>
+
+    <!-- Modal for editing Hadith -->
+    <div id="editHadithModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('editHadithModal')">×</span>
+            <h2>Edit Hadith</h2>
+            <form id="editHadithForm">
+                <input type="hidden" id="editHadithId">
+                <label for="editArabicText">Arabic Text:</label>
+                <textarea id="editArabicText" required></textarea>
+
+                <label for="editTranslationText">Translation:</label>
+                <textarea id="editTranslationText" required></textarea>
+
+                <label for="editSource">Source:</label>
+                <input type="text" id="editSource" required>
+
+                <label for="editNotes">Personal Notes:</label>
+                <textarea id="editNotes"></textarea>
+
+                 <div class="tag-input-container">
+                    <label for="editHadithTags">Tags (comma separated or select below):</label>
+                    <input type="text" id="editHadithTagsInput" placeholder="Enter new tag">
+                    <button type="button" onclick="addTagFromEditInput()">Add Tag</button>
+                </div>
+                <div id="editAvailableTags" class="selected-tags"></div>
+                <div id="editSelectedTags" class="selected-tags"></div>
+
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const DB_NAME = 'HadithGemsDB';
+        const DB_VERSION = 1;
+        let db;
+
+        const sections = ['addHadithSection', 'viewHadithSection', 'tagsSection', 'collectionsSection', 'importHadithSection', 'backupRestoreSection'];
+        const API_EDITIONS_URL = 'https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions.json';
+        let availableEditions = {};
+
+        // IndexedDB Initialization
+        function initDb() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+                request.onerror = (event) => {
+                    console.error('IndexedDB error:', event.target.errorCode);
+                    reject('IndexedDB error');
+                };
+
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+                    if (!db.objectStoreNames.contains('hadith')) {
+                        db.createObjectStore('hadith', { keyPath: 'id', autoIncrement: true });
+                    }
+                    if (!db.objectStoreNames.contains('tags')) {
+                        db.createObjectStore('tags', { keyPath: 'name' });
+                    }
+                     if (!db.objectStoreNames.contains('collections')) {
+                        db.createObjectStore('collections', { keyPath: 'id', autoIncrement: true });
+                    }
+                };
+
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    console.log('IndexedDB initialized successfully');
+                    resolve();
+                };
+            });
+        }
+
+        // Data Operations
+        function addHadith(hadith) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['hadith'], 'readwrite');
+                const store = transaction.objectStore('hadith');
+                const request = store.add(hadith);
+
+                request.onsuccess = () => {
+                    resolve(request.result);
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error adding hadith:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        function getAllHadith() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['hadith'], 'readonly');
+                const store = transaction.objectStore('hadith');
+                const request = store.getAll();
+
+                request.onsuccess = () => {
+                    resolve(request.result);
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error getting all hadith:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+         function getHadithById(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['hadith'], 'readonly');
+                const store = transaction.objectStore('hadith');
+                const request = store.get(id);
+
+                request.onsuccess = () => {
+                    resolve(request.result);
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error getting hadith by id:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        function updateHadith(hadith) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['hadith'], 'readwrite');
+                const store = transaction.objectStore('hadith');
+                const request = store.put(hadith);
+
+                request.onsuccess = () => {
+                    resolve();
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error updating hadith:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        function deleteHadith(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['hadith'], 'readwrite');
+                const store = transaction.objectStore('hadith');
+                const request = store.delete(id);
+
+                request.onsuccess = () => {
+                    resolve();
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error deleting hadith:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        function addTag(tag) {
+             return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['tags'], 'readwrite');
+                const store = transaction.objectStore('tags');
+                const request = store.add({ name: tag });
+
+                request.onsuccess = () => {
+                    resolve();
+                };
+
+                request.onerror = (event) => {
+                     // Ignore error if tag already exists
+                    if (event.target.error.name === 'ConstraintError') {
+                        console.warn(`Tag "${tag}" already exists.`);
+                        resolve();
+                    } else {
+                        console.error('Error adding tag:', event.target.error);
+                        reject(event.target.error);
+                    }
+                };
+            });
+        }
+
+        function getAllTags() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['tags'], 'readonly');
+                const store = transaction.objectStore('tags');
+                const request = store.getAll();
+
+                request.onsuccess = () => {
+                    resolve(request.result.map(tag => tag.name));
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error getting all tags:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        function deleteTag(tagName) {
+             return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['tags'], 'readwrite');
+                const store = transaction.objectStore('tags');
+                const request = store.delete(tagName);
+
+                request.onsuccess = () => {
+                    resolve();
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error deleting tag:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+         function addCollection(collection) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['collections'], 'readwrite');
+                const store = transaction.objectStore('collections');
+                const request = store.add(collection);
+
+                request.onsuccess = () => {
+                    resolve(request.result);
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error adding collection:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        function getAllCollections() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['collections'], 'readonly');
+                const store = transaction.objectStore('collections');
+                const request = store.getAll();
+
+                request.onsuccess = () => {
+                    resolve(request.result);
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error getting all collections:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        function updateCollection(collection) {
+             return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['collections'], 'readwrite');
+                const store = transaction.objectStore('collections');
+                const request = store.put(collection);
+
+                request.onsuccess = () => {
+                    resolve();
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error updating collection:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        function deleteCollection(collectionId) {
+             return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['collections'], 'readwrite');
+                const store = transaction.objectStore('collections');
+                const request = store.delete(collectionId);
+
+                request.onsuccess = () => {
+                    resolve();
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error deleting collection:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+
+        // UI Functions
+        function showSection(sectionId) {
+            sections.forEach(id => {
+                document.getElementById(id).classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            // Load data when switching to relevant sections
+            if (sectionId === 'viewHadithSection') {
+                loadHadithList();
+                loadHadithOfTheDay();
+            } else if (sectionId === 'tagsSection') {
+                loadTagList();
+            } else if (sectionId === 'collectionsSection') {
+                loadCollectionList();
+                populateExportCollectionSelect();
+            } else if (sectionId === 'addHadithSection') {
+                 loadAvailableTags('availableTags', 'selectedTags');
+            } else if (sectionId === 'importHadithSection') {
+                 loadHadithCollections();
+            }
+        }
+
+        async function loadHadithList(filter = '') {
+            const hadithListElement = document.getElementById('hadithList');
+            hadithListElement.innerHTML = '';
+            const allHadith = await getAllHadith();
+
+            const filteredHadith = allHadith.filter(hadith => {
+                const searchLower = filter.toLowerCase();
+                return hadith.arabicText.toLowerCase().includes(searchLower) ||
+                       hadith.translationText.toLowerCase().includes(searchLower) ||
+                       hadith.source.toLowerCase().includes(searchLower) ||
+                       (hadith.notes && hadith.notes.toLowerCase().includes(searchLower)) ||
+                       (hadith.tags && hadith.tags.some(tag => tag.toLowerCase().includes(searchLower)));
+            });
+
+
+            if (filteredHadith.length === 0) {
+                hadithListElement.innerHTML = '<p>No Hadith found.</p>';
+                return;
+            }
+
+            filteredHadith.forEach(hadith => {
+                const li = document.createElement('li');
+                li.classList.add('hadith-item');
+                li.innerHTML = `
+                    <h3>${hadith.arabicText}</h3>
+                    <p>${hadith.translationText}</p>
+                    <p class="source">${hadith.source}</p>
+                    ${hadith.notes ? `<p class="notes"><strong>Notes:</strong> ${hadith.notes}</p>` : ''}
+                    <div class="tags">
+                        ${(hadith.tags || []).map(tag => `<span>${tag}</span>`).join('')}
+                    </div>
+                    <button onclick="editHadith(${hadith.id})">Edit</button>
+                    <button onclick="deleteHadithItem(${hadith.id})">Delete</button>
+                `;
+                li.querySelector('button:nth-of-type(1)').onclick = () => editHadith(hadith.id);
+                li.querySelector('button:nth-of-type(2)').onclick = () => deleteHadithItem(hadith.id);
+                hadithListElement.appendChild(li);
+            });
+        }
+
+        async function loadTagList() {
+            const tagListElement = document.getElementById('tagList');
+            tagListElement.innerHTML = '';
+            const allTags = await getAllTags();
+
+            if (allTags.length === 0) {
+                tagListElement.innerHTML = '<p>No tags created yet.</p>';
+                return;
+            }
+
+            allTags.forEach(tag => {
+                const li = document.createElement('li');
+                li.classList.add('tag-item');
+                li.innerHTML = `
+                    <span>${tag}</span>
+                    <button>Delete</button>
+                `;
+                 li.querySelector('button').onclick = () => deleteTagItem(tag);
+                tagListElement.appendChild(li);
+            });
+        }
+
+         async function loadCollectionList() {
+            const collectionListElement = document.getElementById('collectionList');
+            collectionListElement.innerHTML = '';
+            const allCollections = await getAllCollections();
+            const allHadith = await getAllHadith(); // Needed to display Hadith in collections
+
+            if (allCollections.length === 0) {
+                collectionListElement.innerHTML = '<p>No collections created yet.</p>';
+                return;
+            }
+
+            allCollections.forEach(collection => {
+                const li = document.createElement('li');
+                li.classList.add('collection-item');
+                li.innerHTML = `
+                    <h3>${collection.name}</h3>
+                    <p>Hadith Count: ${collection.hadithIds.length}</p>
+                    <button>View Hadith</button>
+                    <button>Delete</button>
+                `;
+                li.querySelector('button:nth-of-type(1)').onclick = () => viewCollection(collection.id);
+                li.querySelector('button:nth-of-type(2)').onclick = () => deleteCollectionItem(collection.id);
+                collectionListElement.appendChild(li);
+            });
+        }
+
+        async function loadAvailableTags(availableTagsId, selectedTagsId, currentTags = []) {
+            const availableTagsElement = document.getElementById(availableTagsId);
+            const selectedTagsElement = document.getElementById(selectedTagsId);
+            availableTagsElement.innerHTML = '<strong>Available Tags:</strong> ';
+            selectedTagsElement.innerHTML = '<strong>Selected Tags:</strong> ';
+
+            const allTags = await getAllTags();
+
+            allTags.forEach(tag => {
+                if (!currentTags.includes(tag)) {
+                     const span = document.createElement('span');
+                    span.textContent = tag;
+                    span.onclick = () => selectTag(tag, selectedTagsId, availableTagsId);
+                    availableTagsElement.appendChild(span);
+                }
+            });
+
+            currentTags.forEach(tag => {
+                 const span = document.createElement('span');
+                span.textContent = tag;
+                span.onclick = () => deselectTag(tag, selectedTagsId, availableTagsId);
+                selectedTagsElement.appendChild(span);
+            });
+        }
+
+        function selectTag(tag, selectedTagsId, availableTagsId) {
+            const selectedTagsElement = document.getElementById(selectedTagsId);
+            const availableTagsElement = document.getElementById(availableTagsId);
+
+            // Remove from available
+            const availableSpans = availableTagsElement.querySelectorAll('span');
+            availableSpans.forEach(span => {
+                if (span.textContent === tag) {
+                    span.remove();
+                }
+            });
+
+            // Add to selected
+            const selectedSpan = document.createElement('span');
+            selectedSpan.textContent = tag;
+            selectedSpan.onclick = () => deselectTag(tag, selectedTagsId, availableTagsId);
+            selectedTagsElement.appendChild(selectedSpan);
+        }
+
+        function deselectTag(tag, selectedTagsId, availableTagsId) {
+             const selectedTagsElement = document.getElementById(selectedTagsId);
+            const availableTagsElement = document.getElementById(availableTagsId);
+
+            // Remove from selected
+            const selectedSpans = selectedTagsElement.querySelectorAll('span');
+            selectedSpans.forEach(span => {
+                if (span.textContent === tag) {
+                    span.remove();
+                }
+            });
+
+            // Add back to available
+            const availableSpan = document.createElement('span');
+            availableSpan.textContent = tag;
+            availableSpan.onclick = () => selectTag(tag, selectedTagsId, availableTagsId);
+            availableTagsElement.appendChild(availableSpan);
+        }
+
+
+        async function loadHadithOfTheDay() {
+            const hotdContentElement = document.getElementById('hotdContent');
+            hotdContentElement.innerHTML = 'Loading...';
+
+            const allHadith = await getAllHadith();
+            if (allHadith.length === 0) {
+                hotdContentElement.innerHTML = '<p>Add some Hadith to see the Hadith of the Day!</p>';
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * allHadith.length);
+            const hadith = allHadith[randomIndex];
+
+             hotdContentElement.innerHTML = `
+                <h3>${hadith.arabicText}</h3>
+                <p>${hadith.translationText}</p>
+                <p class="source">${hadith.source}</p>
+                ${hadith.notes ? `<p class="notes"><strong>Notes:</strong> ${hadith.notes}</p>` : ''}
+                 <div class="tags">
+                    ${(hadith.tags || []).map(tag => `<span>${tag}</span>`).join('')}
+                </div>
+            `;
+        }
+
+        async function populateExportCollectionSelect() {
+            const selectElement = document.getElementById('exportCollectionSelect');
+            selectElement.innerHTML = '<option value="">Select a Collection</option>';
+            const collections = await getAllCollections();
+            collections.forEach(collection => {
+                const option = document.createElement('option');
+                option.value = collection.id;
+                option.textContent = collection.name;
+                selectElement.appendChild(option);
+            });
+        }
+
+        async function loadHadithCollections() {
+            const selectElement = document.getElementById('hadithCollectionSelect');
+            selectElement.innerHTML = '<option value="">Loading collections...</option>';
+            document.getElementById('hadithLanguageSelect').innerHTML = '<option value="">Select a collection first</option>';
+            document.getElementById('hadithLanguageSelect').disabled = true;
+
+            try {
+                const response = await fetch(API_EDITIONS_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                availableEditions = await response.json();
+                selectElement.innerHTML = '<option value="">Select a Collection</option>';
+                for (const bookKey in availableEditions) {
+                    const option = document.createElement('option');
+                    option.value = bookKey;
+                    option.textContent = availableEditions[bookKey].name;
+                    selectElement.appendChild(option);
+                }
+            } catch (error) {
+                console.error('Error fetching Hadith collections:', error);
+                document.getElementById('importStatus').textContent = 'Error loading collections. Check console.';
+                selectElement.innerHTML = '<option value="">Error loading collections</option>';
+            }
+        }
+
+        function populateHadithLanguages() {
+            const collectionSelect = document.getElementById('hadithCollectionSelect');
+            const languageSelect = document.getElementById('hadithLanguageSelect');
+            const selectedCollectionKey = collectionSelect.value;
+
+            languageSelect.innerHTML = '<option value="">Select a Language</option>';
+            languageSelect.disabled = true;
+
+            if (selectedCollectionKey && availableEditions[selectedCollectionKey]) {
+                const editions = availableEditions[selectedCollectionKey].collection;
+                editions.forEach(edition => {
+                    const option = document.createElement('option');
+                    option.value = edition.name; // Use the edition name (e.g., 'eng-bukhari')
+                    option.textContent = `${edition.language} (${edition.author || 'Unknown'})`;
+                    option.dataset.linkmin = edition.linkmin; // Store the linkmin URL
+                    languageSelect.appendChild(option);
+                });
+                languageSelect.disabled = false;
+            }
+        }
+
+        async function importAllFromCollection() {
+             const languageSelect = document.getElementById('hadithLanguageSelect');
+             const importStatusElement = document.getElementById('importStatus');
+
+            const selectedOption = languageSelect.options[languageSelect.selectedIndex];
+            const editionName = languageSelect.value;
+            const linkMin = selectedOption.dataset.linkmin;
+
+            if (!editionName || !linkMin) {
+                importStatusElement.textContent = 'Please select a collection and language.';
+                return;
+            }
+
+            importStatusElement.textContent = 'Fetching entire collection... This may take some time.';
+
+            try {
+                const response = await fetch(linkMin);
+                 if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const hadithData = await response.json();
+
+                if (hadithData && hadithData.hadith) {
+                    const allHadith = hadithData.hadith; // Assuming the API returns an array of hadith for the whole collection endpoint
+
+                    importStatusElement.textContent = `Importing ${allHadith.length} Hadith...`;
+
+                    let importedCount = 0;
+                    const transaction = db.transaction(['hadith', 'tags'], 'readwrite');
+                    const hadithStore = transaction.objectStore('hadith');
+                    const tagsStore = transaction.objectStore('tags');
+
+                    const collectionTag = hadithData.metadata.collection;
+                    const languageTag = hadithData.metadata.language;
+
+                    // Add collection and language tags if they don't exist
+                    tagsStore.add({ name: collectionTag }).onerror = (e) => { if (e.target.error.name !== 'ConstraintError') console.error('Error adding tag:', e.target.error); };
+                    tagsStore.add({ name: languageTag }).onerror = (e) => { if (e.target.error.name !== 'ConstraintError') console.error('Error adding tag:', e.target.error); };
+
+
+                    for (const hadith of allHadith) {
+                         const newHadith = {
+                            arabicText: hadith.arabic || '',
+                            translationText: hadith.english || hadith.text || '', // Use english or generic text
+                            source: `${hadithData.metadata.collection} - Hadith No. ${hadith.hadithnumber}`,
+                            notes: '', // Imported Hadith have no personal notes initially
+                            tags: [collectionTag, languageTag], // Add source and language as tags
+                            createdAt: new Date()
+                        };
+                         hadithStore.add(newHadith).onsuccess = () => {
+                            importedCount++;
+                            importStatusElement.textContent = `Importing Hadith ${importedCount}/${allHadith.length}...`;
+                        };
+                         hadithStore.add(newHadith).onerror = (event) => {
+                            console.error(`Error importing Hadith ${hadith.hadithnumber}:`, event.target.error);
+                            importStatusElement.textContent = `Error importing Hadith ${hadith.hadithnumber}. See console for details.`;
+                            // Continue trying to import others
+                        };
+                    }
+
+                    transaction.oncomplete = () => {
+                         importStatusElement.textContent = `Import complete. Successfully imported ${importedCount} Hadith from ${hadithData.metadata.collection}.`;
+                         // Optionally, switch to view section after import
+                         // showSection('viewHadithSection');
+                    };
+
+                    transaction.onerror = (event) => {
+                         console.error('Transaction error during import:', event.target.error);
+                         importStatusElement.textContent = `Error during import transaction: ${event.target.error.message}`;
+                    };
+
+
+                } else {
+                     importStatusElement.textContent = 'Could not fetch the entire collection from the API or invalid data format.';
+                }
+            } catch (error) {
+                 console.error('Error fetching or processing collection:', error);
+                 importStatusElement.textContent = `Error fetching or processing collection: ${error.message}`;
+            }
+        }
+
+
+        // Event Handlers
+        document.getElementById('addHadithForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const arabicText = document.getElementById('arabicText').value;
+            const translationText = document.getElementById('translationText').value;
+            const source = document.getElementById('source').value;
+            const notes = document.getElementById('notes').value;
+            const selectedTags = Array.from(document.getElementById('selectedTags').querySelectorAll('span')).map(span => span.textContent);
+
+
+            const newHadith = {
+                arabicText,
+                translationText,
+                source,
+                notes,
+                tags: selectedTags,
+                createdAt: new Date()
+            };
+
+            try {
+                await addHadith(newHadith);
+                alert('Hadith saved successfully!');
+                document.getElementById('addHadithForm').reset();
+                document.getElementById('selectedTags').innerHTML = '<strong>Selected Tags:</strong> '; // Clear selected tags
+                loadAvailableTags('availableTags', 'selectedTags'); // Reload available tags
+            } catch (error) {
+                alert('Error saving Hadith: ' + error);
+            }
+        });
+
+        document.getElementById('searchBar').addEventListener('input', (event) => {
+            loadHadithList(event.target.value);
+        });
+
+        async function addNewTag() {
+            const newTagNameInput = document.getElementById('newTagName');
+            const tagName = newTagNameInput.value.trim();
+            if (tagName) {
+                try {
+                    await addTag(tagName);
+                    newTagNameInput.value = '';
+                    loadTagList();
+                    loadAvailableTags('availableTags', 'selectedTags'); // Update tags in add section
+                    loadAvailableTags('editAvailableTags', 'editSelectedTags'); // Update tags in edit modal
+                } catch (error) {
+                    alert('Error adding tag: ' + error);
+                }
+            }
+        }
+
+        async function deleteTagItem(tagName) {
+            if (confirm(`Are you sure you want to delete the tag "${tagName}"?`)) {
+                try {
+                    await deleteTag(tagName);
+                    loadTagList();
+                    loadAvailableTags('availableTags', 'selectedTags'); // Update tags in add section
+                    loadAvailableTags('editAvailableTags', 'editSelectedTags'); // Update tags in edit modal
+                    // TODO: Consider removing this tag from existing Hadith if needed
+                } catch (error) {
+                    alert('Error deleting tag: ' + error);
+                }
+            }
+        }
+
+        async function addNewCollection() {
+            const newCollectionNameInput = document.getElementById('newCollectionName');
+            const collectionName = newCollectionNameInput.value.trim();
+            if (collectionName) {
+                try {
+                    await addCollection({ name: collectionName, hadithIds: [] });
+                    newCollectionNameInput.value = '';
+                    loadCollectionList();
+                    populateExportCollectionSelect();
+                } catch (error) {
+                    alert('Error adding collection: ' + error);
+                }
+            }
+        }
+
+        async function deleteCollectionItem(collectionId) {
+             if (confirm(`Are you sure you want to delete this collection?`)) {
+                try {
+                    await deleteCollection(collectionId);
+                    loadCollectionList();
+                    populateExportCollectionSelect();
+                } catch (error) {
+                    alert('Error deleting collection: ' + error);
+                }
+            }
+        }
+
+        async function editHadith(hadithId) {
+            const hadith = await getHadithById(hadithId);
+            if (hadith) {
+                document.getElementById('editHadithId').value = hadith.id;
+                document.getElementById('editArabicText').value = hadith.arabicText;
+                document.getElementById('editTranslationText').value = hadith.translationText;
+                document.getElementById('editSource').value = hadith.source;
+                document.getElementById('editNotes').value = hadith.notes || '';
+                loadAvailableTags('editAvailableTags', 'editSelectedTags', hadith.tags || []);
+                document.getElementById('editHadithModal').style.display = 'block';
+            }
+        }
+
+        async function deleteHadithItem(hadithId) {
+            if (confirm('Are you sure you want to delete this Hadith?')) {
+                try {
+                    await deleteHadith(hadithId);
+                    loadHadithList(); // Reload the list
+                    // TODO: Remove this Hadith ID from any collections it belongs to
+                } catch (error) {
+                    alert('Error deleting Hadith: ' + error);
+                }
+            }
+        }
+
+        document.getElementById('editHadithForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const id = parseInt(document.getElementById('editHadithId').value);
+            const arabicText = document.getElementById('editArabicText').value;
+            const translationText = document.getElementById('editTranslationText').value;
+            const source = document.getElementById('editSource').value;
+            const notes = document.getElementById('editNotes').value;
+            const selectedTags = Array.from(document.getElementById('editSelectedTags').querySelectorAll('span')).map(span => span.textContent);
+
+
+            const updatedHadith = {
+                id,
+                arabicText,
+                translationText,
+                source,
+                notes,
+                tags: selectedTags,
+                createdAt: new Date() // Keep original or update? Keeping original for now.
+            };
+
+            try {
+                await updateHadith(updatedHadith);
+                alert('Hadith updated successfully!');
+                closeModal('editHadithModal');
+                loadHadithList(); // Reload the list
+            } catch (error) {
+                alert('Error updating Hadith: ' + error);
+            }
+        });
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+            }
+        }
+
+        function addTagFromInput() {
+            const input = document.getElementById('hadithTagsInput');
+            const tagName = input.value.trim();
+            if (tagName) {
+                selectTag(tagName, 'selectedTags', 'availableTags');
+                input.value = '';
+                addTag(tagName); // Add to global tags if it's new
+            }
+        }
+
+         function addTagFromEditInput() {
+            const input = document.getElementById('editHadithTagsInput');
+            const tagName = input.value.trim();
+            if (tagName) {
+                selectTag(tagName, 'editSelectedTags', 'editAvailableTags');
+                input.value = '';
+                 addTag(tagName); // Add to global tags if it's new
+            }
+        }
+
+        async function viewCollection(collectionId) {
+            const collections = await getAllCollections();
+            const collection = collections.find(c => c.id === collectionId);
+            if (collection) {
+                const allHadith = await getAllHadith();
+                const collectionHadith = allHadith.filter(h => collection.hadithIds.includes(h.id));
+
+                const hadithListElement = document.getElementById('hadithList');
+                hadithListElement.innerHTML = ''; // Clear current list
+
+                if (collectionHadith.length === 0) {
+                    hadithListElement.innerHTML = `<p>No Hadith in "${collection.name}" collection.</p>`;
+                } else {
+                     collectionHadith.forEach(hadith => {
+                        const li = document.createElement('li');
+                        li.classList.add('hadith-item');
+                        li.innerHTML = `
+                            <h3>${hadith.arabicText}</h3>
+                            <p>${hadith.translationText}</p>
+                            <p class="source">${hadith.source}</p>
+                            ${hadith.notes ? `<p class="notes"><strong>Notes:</strong> ${hadith.notes}</p>` : ''}
+                            <div class="tags">
+                                ${(hadith.tags || []).map(tag => `<span>${tag}</span>`).join('')}
+                            </div>
+                            <button>Edit</button>
+                            <button>Delete</button>
+                        `;
+                        li.querySelector('button:nth-of-type(1)').onclick = () => editHadith(hadith.id);
+                        li.querySelector('button:nth-of-type(2)').onclick = () => deleteHadithItem(hadith.id);
+                        hadithListElement.appendChild(li);
+                    });
+                }
+
+                // Optionally, switch to the view Hadith section
+                showSection('viewHadithSection');
+                 // Update the heading to show the collection name
+                document.querySelector('#viewHadithSection h2').textContent = `Hadith in Collection: ${collection.name}`;
+                // Hide search bar when viewing a specific collection
+                document.getElementById('searchBar').style.display = 'none';
+                 // Add a button to go back to all Hadith
+                const backButton = document.createElement('button');
+                backButton.textContent = 'Back to All Hadith';
+                backButton.onclick = () => {
+                    document.querySelector('#viewHadithSection h2').textContent = 'View All Hadith';
+                    document.getElementById('searchBar').style.display = 'block';
+                    loadHadithList();
+                };
+                hadithListElement.before(backButton); // Add button before the list
+            }
+        }
+
+        async function exportCollection() {
+            const selectElement = document.getElementById('exportCollectionSelect');
+            const collectionId = parseInt(selectElement.value);
+
+            if (!collectionId) {
+                alert('Please select a collection to export.');
+                return;
+            }
+
+            const collections = await getAllCollections();
+            const collection = collections.find(c => c.id === collectionId);
+
+            if (collection) {
+                const allHadith = await getAllHadith();
+                const collectionHadith = allHadith.filter(h => collection.hadithIds.includes(h.id));
+
+                const exportData = {
+                    collectionName: collection.name,
+                    hadith: collectionHadith
+                };
+
+                downloadJson(exportData, `${collection.name}_hadith_collection.json`);
+            } else {
+                alert('Collection not found.');
+            }
+        }
+
+        async function exportAllHadith() {
+            const allHadith = await getAllHadith();
+            const allTags = await getAllTags();
+            const allCollections = await getAllCollections();
+
+            const exportData = {
+                hadith: allHadith,
+                tags: allTags,
+                collections: allCollections
+            };
+
+            downloadJson(exportData, 'all_hadith_gems_data.json');
+        }
+
+        function downloadJson(data, filename) {
+            const jsonString = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        async function backupData() {
+             const allHadith = await getAllHadith();
+            const allTags = await getAllTags();
+            const allCollections = await getAllCollections();
+
+            const backupData = {
+                hadith: allHadith,
+                tags: allTags,
+                collections: allCollections,
+                timestamp: new Date().toISOString()
+            };
+
+            downloadJson(backupData, 'hadith_gems_backup.json');
+        }
+
+        function restoreData() {
+            const fileInput = document.getElementById('restoreFile');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select a backup file to restore.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                try {
+                    const data = JSON.parse(event.target.result);
+
+                    if (!data || !data.hadith || !data.tags || !data.collections) {
+                        alert('Invalid backup file format.');
+                        return;
+                    }
+
+                    if (confirm('Restoring will overwrite your current data. Are you sure?')) {
+                        await clearAllData();
+                        await importData(data);
+                        alert('Data restored successfully!');
+                        // Reload relevant sections
+                        loadHadithList();
+                        loadTagList();
+                        loadCollectionList();
+                        populateExportCollectionSelect();
+                        showSection('viewHadithSection'); // Go back to view section
+                    }
+
+                } catch (error) {
+                    console.error('Error parsing or importing data:', error);
+                    alert('Error restoring data. Please check the file format.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function clearAllData() {
+             return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['hadith', 'tags', 'collections'], 'readwrite');
+                const hadithStore = transaction.objectStore('hadith');
+                const tagsStore = transaction.objectStore('tags');
+                const collectionsStore = transaction.objectStore('collections');
+
+                const hadithClearRequest = hadithStore.clear();
+                const tagsClearRequest = tagsStore.clear();
+                const collectionsClearRequest = collectionsStore.clear();
+
+                transaction.oncomplete = () => {
+                    console.log('All data cleared.');
+                    resolve();
+                };
+
+                transaction.onerror = (event) => {
+                    console.error('Error clearing data:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        async function importData(data) {
+             const transaction = db.transaction(['hadith', 'tags', 'collections'], 'readwrite');
+            const hadithStore = transaction.objectStore('hadith');
+            const tagsStore = transaction.objectStore('tags');
+            const collectionsStore = transaction.objectStore('collections');
+
+            // Import Hadith
+            for (const hadith of data.hadith) {
+                 // Remove old ID to let IndexedDB assign a new one
+                const { id, ...hadithWithoutId } = hadith;
+                hadithStore.add(hadithWithoutId);
+            }
+
+            // Import Tags
+            for (const tag of data.tags) {
+                 // Use put instead of add to avoid ConstraintError if tag already exists
+                tagsStore.put({ name: tag });
+            }
+
+            // Import Collections
+             for (const collection of data.collections) {
+                 // Remove old ID to let IndexedDB assign a new one
+                const { id, ...collectionWithoutId } = collection;
+                 // Note: Hadith IDs in collections will refer to the OLD IDs.
+                 // A more robust restore might map old IDs to new IDs, but for simplicity,
+                 // we'll just import the collection structure as is.
+                 // This means collections might point to non-existent Hadith if the backup
+                 // didn't contain all Hadith or if Hadith IDs changed significantly.
+                collectionsStore.add(collectionWithoutId);
+            }
+
+
+            return new Promise((resolve, reject) => {
+                transaction.oncomplete = () => {
+                    console.log('Data imported successfully.');
+                    resolve();
+                };
+
+                transaction.onerror = (event) => {
+                    console.error('Error importing data:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                document.body.removeAttribute('data-theme');
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+            }
+        }
+
+
+        // Initial Load
+        window.onload = async () => {
+            await initDb();
+            showSection('addHadithSection'); // Start on the add Hadith section
+
+            // Add event listener for collection select change
+            document.getElementById('hadithCollectionSelect').addEventListener('change', populateHadithLanguages);
+        };
+
+    </script>
+</body>
+</html>

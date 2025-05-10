@@ -1,0 +1,113 @@
+{
+	"abudawud": {
+		"metadata": {
+			"name": "Sunan Abu Dawud",
+			"sections": {
+				"0": "",
+				"1": "Purification (Kitab Al-Taharah)",
+				"2": "Prayer (Kitab Al-Salat)",
+				"3": "The Book Of The Prayer For Rain (Kitab al-Istisqa')",
+				"4": "Prayer (Kitab Al-Salat): Detailed Rules of Law about the Prayer during Journey",
+				"5": "Prayer (Kitab Al-Salat): Voluntary Prayers",
+				"6": "Prayer (Kitab Al-Salat): Detailed Injunctions about Ramadan",
+				"7": "Prayer (Kitab Al-Salat): Prostration while reciting the Qur'an",
+				........
+			},
+			"last_hadithnumber": 5274,
+			"section_details": {
+				"0": {
+					"hadithnumber_first": 0,
+					"hadithnumber_last": 0,
+					"arabicnumber_first": 0,
+					"arabicnumber_last": 0
+				},
+				"1": {
+					"hadithnumber_first": 1,
+					"hadithnumber_last": 390,
+					"arabicnumber_first": 1,
+					"arabicnumber_last": 390
+				},
+				"2": {
+					"hadithnumber_first": 391,
+					"hadithnumber_last": 1160,
+					"arabicnumber_first": 391,
+					"arabicnumber_last": 1160
+				},
+				.......
+			}
+		},
+		"hadiths": [
+			{
+				"hadithnumber": 1,
+				"arabicnumber": 1,
+				"grades": [
+					{
+						"name": "Al-Albani",
+						"grade": "Hasan Sahih"
+					},
+					{
+						"name": "Muhammad Muhyi Al-Din Abdul Hamid",
+						"grade": "Hasan Sahih"
+					},
+					{
+						"name": "Shuaib Al Arnaut",
+						"grade": "Sahih Lighairihi"
+					},
+					{
+						"name": "Zubair Ali Zai",
+						"grade": "Isnaad Hasan"
+					}
+				],
+				"reference": {
+					"book": 1,
+					"hadith": 1
+				}
+			},
+			{
+				"hadithnumber": 2,
+				"arabicnumber": 2,
+				"grades": [
+					{
+						"name": "Al-Albani",
+						"grade": "Sahih"
+					},
+					{
+						"name": "Muhammad Muhyi Al-Din Abdul Hamid",
+						"grade": "Sahih"
+					},
+					{
+						"name": "Shuaib Al Arnaut",
+						"grade": "Sahih Lighairihi"
+					},
+					{
+						"name": "Zubair Ali Zai",
+						"grade": "Daif"
+					}
+				],
+				"reference": {
+					"book": 1,
+					"hadith": 2
+				}
+			},
+			{
+				"hadithnumber": 3,
+				"arabicnumber": 3,
+				"grades": [
+					{
+						"name": "Al-Albani",
+						"grade": "Daif"
+					},
+					{
+						"name": "Muhammad Muhyi Al-Din Abdul Hamid",
+						"grade": "Daif"
+					},
+					{
+						"name": "Shuaib Al Arnaut",
+						"grade": "Daif"
+					},
+					{
+						"name": "Zubair Ali Zai",
+						"grade": "Daif"
+					}
+				],
+				........
